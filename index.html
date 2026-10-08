@@ -1002,13 +1002,13 @@ if("serviceWorker" in navigator&&location.protocol==="https:"&&/github\.io$/.tes
 }
 
 /* ---------- 오늘의 방문자 (Supabase, 날짜별 숫자만 저장) ---------- */
-const VISIT={url:"",key:""}; // Supabase Project URL과 anon public 키를 넣으면 켜져요
+const VISIT={url:"https://nittfsdpvigzhderfado.supabase.co",key:"sb_publishable_LzUJlC74yr8VE3e3Efgfqw_vTAOVjVL"}; // 공개용(publishable) 키라 페이지에 넣어도 괜찮아요
 (async()=>{
   if(!VISIT.url||!VISIT.key||!window.fetch)return;
   const first=store.get("meong.visited")!==todayKey; // 이 기기에서 오늘 처음 열었을 때만 1 더함
   try{
     const res=await fetch(VISIT.url.replace(/\/$/,"")+"/rest/v1/rpc/meong_visit",{method:"POST",
-      headers:{"apikey":VISIT.key,"Authorization":"Bearer "+VISIT.key,"Content-Type":"application/json"},
+      headers:Object.assign({"apikey":VISIT.key,"Content-Type":"application/json"},VISIT.key.startsWith("eyJ")?{"Authorization":"Bearer "+VISIT.key}:{}), // 새 형식 키(sb_publishable_)는 apikey만 보냄
       body:JSON.stringify({p_new:first})});
     if(!res.ok)return;
     const v=await res.json();
