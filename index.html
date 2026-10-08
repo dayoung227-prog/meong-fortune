@@ -69,6 +69,11 @@ button:disabled{opacity:.5;cursor:default}
 .chips .add{padding:5px 12px;border-radius:99px;font-size:13px;border-style:dashed;background:transparent;color:var(--muted)}
 .note{font-size:12px;color:var(--muted);margin:0}
 .fun-note{font-size:12px;color:var(--muted);margin:0 0 -12px;text-align:right}
+.onboard{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--surface);border:1.5px dashed var(--cinnabar);border-radius:10px;padding:12px 14px}
+.onboard > div{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 220px}
+.onboard b{font-size:14px}
+.onboard span{font-size:12px;color:var(--muted)}
+.cropper .frame.round{border-radius:50%}
 .status{font-size:13px;color:var(--muted)}
 .status.err{color:var(--bad)}
 /* avatar */
@@ -193,6 +198,10 @@ footer a{color:inherit}
   <div class="page" id="page-luck" role="tabpanel" aria-labelledby="tab-luck">
     <div class="chips" id="dogbar" aria-label="강아지 선택"></div>
 
+    <div class="onboard" id="onboard" hidden>
+      <div><b>봉봉은 예시 강아지예요</b><span>우리 강아지를 등록하면 생일로 운세를 보고, 사진으로 기분 점수를 저장할 수 있어요.</span></div>
+      <button type="button" class="primary" id="onboardBtn">내 강아지 등록하기</button>
+    </div>
     <p class="fun-note">운세는 재미로 즐겨주세요</p>
     <section class="bujeok" id="bujeok" aria-label="오늘의 운세 결과">
       <div class="b-top">
@@ -287,6 +296,7 @@ footer a{color:inherit}
 
     <section class="sheet" id="formSheet" aria-labelledby="h-form" hidden>
       <h2 id="h-form">새 강아지 등록</h2>
+      <p class="tip-now" id="fHint" style="font-size:13px"></p>
       <div class="pf">
         <div class="av m" id="fAv" aria-hidden="true">?</div>
         <label class="btn small filebtn">프로필 사진 고르기<input id="fPhoto" type="file" accept="image/*" aria-label="프로필 사진 선택"></label>
@@ -341,6 +351,23 @@ footer a{color:inherit}
       <a class="btn" id="shareSave" download="meong-fortune.png">이미지 저장</a>
     </div>
     <p class="note" style="text-align:center">저장이 안 되면 이미지를 길게 눌러 저장하세요.</p>
+  </div>
+</div>
+
+<!-- 프로필 사진 맞추기 -->
+<div class="modal" id="pfModal" role="dialog" aria-modal="true" aria-labelledby="h-pf" hidden>
+  <div class="box">
+    <h3 id="h-pf">프로필 사진 맞추기</h3>
+    <div class="cropper" id="pfCropper" aria-label="프로필 사진 위치 맞추기">
+      <canvas width="640" height="640"></canvas>
+      <div class="frame round"></div>
+    </div>
+    <div class="zoom"><span>작게</span><input id="pfZoom" type="range" min="1" max="4" step="0.01" value="1" aria-label="확대"><span>크게</span></div>
+    <p class="note" style="text-align:center">사진을 끌어서 옮기고, 막대로 확대해 얼굴을 동그라미 안에 맞춰주세요.</p>
+    <div class="btns" style="justify-content:center">
+      <button type="button" class="primary" id="pfUse">이 사진 쓰기</button>
+      <button type="button" class="ghost" id="pfCancel">취소</button>
+    </div>
   </div>
 </div>
 
@@ -483,7 +510,14 @@ const shown=()=>dogs.length?dogs:[EXAMPLE];
 const active=()=>shown().find(d=>d.id===activeId)||shown()[0];
 const saveDogs=()=>store.set("meong.dogs",dogs)&&store.set("meong.active",activeId);
 const moodKey=id=>"meong.mood."+id, histKey=id=>"meong.hist."+id;
-function getMood(id){const m=store.get(moodKey(id));return m&&m.date===todayKey?m:null}
+function getMood(id){
+  if(id==="example")return null; // 예시 강아지는 기분을 저장하지 않음
+  const m=store.get(moodKey(id));
+  if(!m||m.date!==todayKey||typeof m.score!=="number")return null;
+  if(!Array.isArray(m.probs))m.probs=[]; if(!m.state)m.state="기분 측정"; if(!m.summary)m.summary="";
+  return m;
+}
+store.del(moodKey("example")); store.del(histKey("example")); // 예전 버전에서 예시로 저장된 기록 정리
 function avatar(d,size){return `<span class="av ${size}" aria-hidden="true">${d&&d.photo?`<img src="${d.photo}" alt="">`:esc((d&&d.name||"?").slice(0,1))}</span>`}
 
 /* ---------- 일진운 ---------- */
@@ -548,8 +582,8 @@ function renderLuck(){
   $("total").textContent=mood&&L.total!=null?L.total:"··";
   const v=L.verse.map(x=>x[1]);
   if(!mood)v.push(`얼굴 사진을 올리면 기분 점수까지 더해 종합 멍운을 봐드려요.`);
-  if(dog.example)v.push(`'우리 강아지'에서 내 강아지를 등록해보세요.`);
   $("verse").innerHTML=v.join(" ");
+  $("onboard").hidden=!!dogs.length;
   $("lColor").textContent=L.luck.color;$("lItem").textContent=L.luck.item;$("lDir").textContent=L.luck.dir;
   $("lWhy").textContent=df?`${dog.name}에게 오늘 필요한 기운: ${L.luck.el} · ${L.luck.why}`:`오늘의 기운: ${L.luck.el} · 생일을 넣으면 ${dog.name}에게 맞춘 행운이 나와요`;
   renderMood(dog,mood);
@@ -582,7 +616,15 @@ function renderRank(){
 }
 
 /* ---------- 강아지 관리 ---------- */
-let editingId=null, delArmed=false, formPhoto=null;
+let editingId=null, delArmed=false, formPhoto=null, photoAfterSave=false;
+/* 예시 상태에서 등록으로 안내 (fromPhoto: 사진 올리기를 누르고 온 경우 → 등록 후 바로 사진 고르기) */
+function goRegister(fromPhoto){
+  showTab("dogs"); openForm(null);
+  photoAfterSave=!!fromPhoto;
+  $("fHint").textContent=fromPhoto?"기분 점수를 저장하려면 먼저 우리 강아지를 등록해주세요. 등록하면 바로 사진을 고를 수 있어요.":"";
+  if(fromPhoto)$("fSave").textContent="등록하고 사진 고르기";
+}
+$("onboardBtn").onclick=()=>goRegister(false);
 function renderDogs(){
   $("dogCount").textContent=dogs.length?`${dogs.length}마리`:"";
   $("multiNow").textContent=dogs.length>=2?`지금 ${dogs.length}마리라 '오늘의 운세'에서 순위를 볼 수 있어요.`:dogs.length===1?"한 마리만 더 등록하면 순위가 나타나요.":"";
@@ -605,25 +647,16 @@ function openForm(id){
   $("fBday").disabled=$("fNoBday").checked;
   $("fSave").textContent=d?"저장하기":"등록하기";
   $("fDelete").hidden=!d;$("fDelete").textContent="삭제";
-  $("fErr").textContent="";
+  $("fErr").textContent=""; $("fHint").textContent=""; photoAfterSave=false;
   renderFormAvatar();
   $("formSheet").scrollIntoView({behavior:"smooth",block:"start"});
   $("fName").focus({preventScroll:true});
 }
-function closeForm(){$("formSheet").hidden=true;editingId=null;formPhoto=null}
-function squareThumb(file,size){ // 가운데를 정사각형으로 잘라 작은 JPEG로
-  return new Promise((res,rej)=>{
-    const im=new Image(),url=URL.createObjectURL(file);
-    im.onload=()=>{const s=Math.min(im.width,im.height),c=document.createElement("canvas");c.width=c.height=size;
-      c.getContext("2d").drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,size,size);URL.revokeObjectURL(url);res(c.toDataURL("image/jpeg",0.82))};
-    im.onerror=()=>{URL.revokeObjectURL(url);rej(new Error("img"))};
-    im.src=url;
-  });
-}
+function closeForm(){$("formSheet").hidden=true;editingId=null;formPhoto=null;photoAfterSave=false;$("fHint").textContent=""}
 $("fName").addEventListener("input",()=>{if(!formPhoto)renderFormAvatar()});
 $("fPhoto").addEventListener("change",async e=>{
   const f=e.target.files&&e.target.files[0]; e.target.value=""; if(!f)return;
-  try{formPhoto=await squareThumb(f,256);$("fErr").textContent="";renderFormAvatar()}
+  try{await pfCrop.load(f);$("pfModal").hidden=false;$("pfUse").focus()}
   catch(err){$("fErr").textContent="이 사진을 열 수 없어요. 다른 사진으로 시도해주세요."}
 });
 $("fPhotoDel").onclick=()=>{formPhoto=null;renderFormAvatar()};
@@ -636,11 +669,13 @@ $("fSave").onclick=()=>{
   if(!noB&&!bday){$("fErr").textContent="생일을 입력하거나 '생일을 몰라요'를 체크해주세요.";return}
   if(!noB&&bday>todayKey){$("fErr").textContent="생일이 오늘보다 늦어요. 날짜를 확인해주세요.";return}
   const data={name,bday:noB?"":bday,noB,photo:formPhoto||null};
-  const before=JSON.stringify(dogs), beforeActive=activeId;
+  const before=JSON.stringify(dogs), beforeActive=activeId, wasEmpty=!dogs.length, isNew=!editingId, thenPhoto=photoAfterSave;
   if(editingId){Object.assign(dogs.find(x=>x.id===editingId),data)}
   else{const id="d"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);dogs.push({id,...data});activeId=id}
   if(!saveDogs()){dogs=JSON.parse(before);activeId=beforeActive;$("fErr").textContent="저장 공간이 부족해요. 다른 강아지의 프로필 사진을 빼고 다시 시도해주세요.";return}
+  if(wasEmpty){store.del(moodKey("example"));store.del(histKey("example"))} // 예전에 예시로 저장된 기록 정리
   closeForm();renderDogs();
+  if(isNew&&(thenPhoto||wasEmpty)){showTab("luck");if(thenPhoto)openPhoto(true)} // 첫 등록 후 운세 화면으로, 사진 버튼에서 왔으면 바로 사진 고르기
 };
 $("fDelete").onclick=()=>{
   if(!editingId)return;
@@ -687,65 +722,68 @@ $("importFile").addEventListener("change",async e=>{
   }catch(err){setB("멍운세 백업 파일이 아니거나 파일이 손상됐어요.",true)}
 });
 
-/* ---------- 사진 맞추기 (crop) ---------- */
-const cv=$("cv"), ctx=cv.getContext("2d"), cropper=$("cropper");
-let img=null, scale=1, base=1, ox=0, oy=0; // ox,oy: image top-left in canvas px
-const FR={x:0.1,y:0.1,s:0.8}; // face frame (fraction of canvas)
-function draw(){
-  ctx.clearRect(0,0,cv.width,cv.height);
-  if(!img)return;
-  const w=img.width*base*scale,h=img.height*base*scale;
-  ctx.drawImage(img,ox,oy,w,h);
+/* ---------- 사진 맞추기 (기분 분석·프로필 공용) ---------- */
+function makeCropper(box,zoomEl){
+  const cv=box.querySelector("canvas"), ctx=cv.getContext("2d"), FR={x:0.1,y:0.1,s:0.8}; // 틀 위치(캔버스 비율)
+  let img=null,scale=1,base=1,ox=0,oy=0,drag=null,pinch=null; const pts=new Map();
+  const draw=()=>{ctx.clearRect(0,0,cv.width,cv.height);if(img)ctx.drawImage(img,ox,oy,img.width*base*scale,img.height*base*scale)};
+  const clamp=()=>{const w=img.width*base*scale,h=img.height*base*scale,W=cv.width,fx=FR.x*W,fy=FR.y*W,fs=FR.s*W;
+    ox=Math.min(fx,Math.max(fx+fs-w,ox));oy=Math.min(fy,Math.max(fy+fs-h,oy))};
+  const setZoom=z=>{if(!img)return;const c=cv.width/2,ix=(c-ox)/(base*scale),iy=(c-oy)/(base*scale);scale=z;ox=c-ix*base*scale;oy=c-iy*base*scale;clamp();draw()};
+  const toCanvas=e=>{const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)*cv.width/r.width,y:(e.clientY-r.top)*cv.height/r.height}};
+  zoomEl.addEventListener("input",e=>setZoom(Number(e.target.value)));
+  box.addEventListener("pointerdown",e=>{if(!img)return;box.setPointerCapture(e.pointerId);pts.set(e.pointerId,toCanvas(e));
+    if(pts.size===1){const p=toCanvas(e);drag={x:p.x,y:p.y,ox,oy};box.classList.add("dragging")}
+    if(pts.size===2){const [a,b]=[...pts.values()];pinch={d:Math.hypot(a.x-b.x,a.y-b.y),z:scale};drag=null}});
+  box.addEventListener("pointermove",e=>{if(!img||!pts.has(e.pointerId))return;pts.set(e.pointerId,toCanvas(e));
+    if(pinch&&pts.size===2){const [a,b]=[...pts.values()];const z=Math.max(1,Math.min(4,pinch.z*Math.hypot(a.x-b.x,a.y-b.y)/pinch.d));zoomEl.value=z;setZoom(z);return}
+    if(drag){const p=toCanvas(e);ox=drag.ox+(p.x-drag.x);oy=drag.oy+(p.y-drag.y);clamp();draw()}});
+  const up=e=>{pts.delete(e.pointerId);if(pts.size<2)pinch=null;if(!pts.size){drag=null;box.classList.remove("dragging")}};
+  box.addEventListener("pointerup",up);box.addEventListener("pointercancel",up);
+  box.addEventListener("wheel",e=>{if(!img)return;e.preventDefault();const z=Math.max(1,Math.min(4,scale*(e.deltaY<0?1.08:0.92)));zoomEl.value=z;setZoom(z)},{passive:false});
+  return{
+    get loaded(){return!!img},
+    load(file){return new Promise((res,rej)=>{const url=URL.createObjectURL(file),im=new Image();
+      im.onload=()=>{img=im;const W=cv.width;base=(FR.s*W)/Math.min(im.width,im.height);scale=1;zoomEl.value=1;ox=(W-im.width*base)/2;oy=(W-im.height*base)/2;clamp();draw();res()};
+      im.onerror=()=>{URL.revokeObjectURL(url);rej(new Error("img"))};im.src=url})},
+    crop(size){const out=document.createElement("canvas");out.width=out.height=size;const W=cv.width;
+      out.getContext("2d").drawImage(img,(FR.x*W-ox)/(base*scale),(FR.y*W-oy)/(base*scale),(FR.s*W)/(base*scale),(FR.s*W)/(base*scale),0,0,size,size);return out},
+    reset(){img=null;zoomEl.value=1;ctx.clearRect(0,0,cv.width,cv.height)}
+  };
 }
-function clamp(){
-  const w=img.width*base*scale,h=img.height*base*scale, W=cv.width;
-  const fx=FR.x*W, fy=FR.y*W, fs=FR.s*W;
-  ox=Math.min(fx,Math.max(fx+fs-w,ox)); oy=Math.min(fy,Math.max(fy+fs-h,oy));
-}
-function setZoom(z){
-  if(!img)return;
-  const W=cv.width, cx=W/2, cy=W/2;
-  const ix=(cx-ox)/(base*scale), iy=(cy-oy)/(base*scale);
-  scale=z; ox=cx-ix*base*scale; oy=cy-iy*base*scale; clamp(); draw();
-}
-$("file").addEventListener("change",e=>{
+const faceCrop=makeCropper($("cropper"),$("zoom"));
+$("file").addEventListener("change",async e=>{
   const f=e.target.files&&e.target.files[0]; if(!f)return;
-  const url=URL.createObjectURL(f), im=new Image();
-  im.onload=()=>{
-    img=im; const W=cv.width;
-    base=(FR.s*W)/Math.min(im.width,im.height); scale=1; $("zoom").value=1;
-    ox=(W-im.width*base)/2; oy=(W-im.height*base)/2; clamp(); draw();
+  try{
+    await faceCrop.load(f);
     $("ph").hidden=true;$("frame").hidden=false;$("zoomRow").hidden=false;$("cropTip").hidden=false;
     $("analyze").disabled=false; $("forceRow").hidden=true; setStatus("");
-  };
-  im.onerror=()=>setStatus("이 사진을 열 수 없어요. 다른 사진으로 시도해주세요.",true);
-  im.src=url;
+  }catch(err){setStatus("이 사진을 열 수 없어요. 다른 사진으로 시도해주세요.",true)}
 });
-$("zoom").addEventListener("input",e=>setZoom(Number(e.target.value)));
 function resetPhoto(){
-  img=null; $("file").value=""; ctx.clearRect(0,0,cv.width,cv.height);
+  faceCrop.reset(); $("file").value="";
   $("ph").hidden=false;$("frame").hidden=true;$("zoomRow").hidden=true;$("cropTip").hidden=true;$("forceRow").hidden=true;
   $("analyze").disabled=true; setStatus("");
 }
 function closePhoto(){ $("photoSheet").hidden=true; resetPhoto(); }
-$("closePhoto").onclick=()=>{closePhoto();$("moodTile").focus()};
-$("moodTile").onclick=()=>{
-  const opening=$("photoSheet").hidden;
+function openPhoto(pickNow){
   $("photoSheet").hidden=false;
   $("photoSheet").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
-  if(opening&&!getMood(active().id))$("file").click(); // 기분 기록이 없으면 바로 사진 고르기 창 열기
+  if(pickNow)$("file").click();
+}
+$("closePhoto").onclick=()=>{closePhoto();$("moodTile").focus()};
+$("moodTile").onclick=()=>{
+  if(!dogs.length){goRegister(true);return} // 예시 강아지에는 기분을 저장하지 않고 먼저 등록하도록
+  const opening=$("photoSheet").hidden;
+  openPhoto(opening&&!getMood(active().id)); // 기분 기록이 없으면 바로 사진 고르기 창 열기
 };
-let drag=null; const pts=new Map(); let pinch=null;
-const toCanvas=(e)=>{const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)*cv.width/r.width,y:(e.clientY-r.top)*cv.height/r.height}};
-cropper.addEventListener("pointerdown",e=>{if(!img)return;cropper.setPointerCapture(e.pointerId);pts.set(e.pointerId,toCanvas(e));
-  if(pts.size===1){const p=toCanvas(e);drag={x:p.x,y:p.y,ox,oy};cropper.classList.add("dragging")}
-  if(pts.size===2){const [a,b]=[...pts.values()];pinch={d:Math.hypot(a.x-b.x,a.y-b.y),z:scale};drag=null}});
-cropper.addEventListener("pointermove",e=>{if(!img||!pts.has(e.pointerId))return;pts.set(e.pointerId,toCanvas(e));
-  if(pinch&&pts.size===2){const [a,b]=[...pts.values()];const z=Math.max(1,Math.min(4,pinch.z*Math.hypot(a.x-b.x,a.y-b.y)/pinch.d));$("zoom").value=z;setZoom(z);return}
-  if(drag){const p=toCanvas(e);ox=drag.ox+(p.x-drag.x);oy=drag.oy+(p.y-drag.y);clamp();draw()}});
-const up=e=>{pts.delete(e.pointerId);if(pts.size<2)pinch=null;if(!pts.size){drag=null;cropper.classList.remove("dragging")}};
-cropper.addEventListener("pointerup",up);cropper.addEventListener("pointercancel",up);
-cropper.addEventListener("wheel",e=>{if(!img)return;e.preventDefault();const z=Math.max(1,Math.min(4,scale*(e.deltaY<0?1.08:0.92)));$("zoom").value=z;setZoom(z)},{passive:false});
+
+/* ---------- 프로필 사진 맞추기 ---------- */
+const pfCrop=makeCropper($("pfCropper"),$("pfZoom"));
+function closePf(){$("pfModal").hidden=true;pfCrop.reset();$("fPhoto").focus()}
+$("pfCancel").onclick=closePf;
+$("pfUse").onclick=()=>{if(pfCrop.loaded){formPhoto=pfCrop.crop(256).toDataURL("image/jpeg",0.82);$("fErr").textContent="";renderFormAvatar()}closePf()};
+$("pfModal").addEventListener("click",e=>{if(e.target===$("pfModal"))closePf()});
 
 /* ---------- 감정 분석 (TensorFlow.js, 기기 안에서만 실행) ---------- */
 let model=null, labels=["angry","happy","relaxed","sad"];
@@ -794,21 +832,15 @@ function moodText(top,score,dogId){
   const t=pick(MOOD_TEXT[top][idx],dogId+"|"+todayKey+"|"+top);
   return{state:t[0],summary:t[1]};
 }
-function cropTensorCanvas(){
-  const out=document.createElement("canvas");out.width=224;out.height=224;
-  const W=cv.width, sx=(FR.x*W-ox)/(base*scale), sy=(FR.y*W-oy)/(base*scale), ss=(FR.s*W)/(base*scale);
-  out.getContext("2d").drawImage(img,sx,sy,ss,ss,0,0,224,224);
-  return out;
-}
 async function analyze(force){
-  if(!img)return;
+  if(!faceCrop.loaded||!dogs.length)return;
   const dog=active();
   $("analyze").disabled=true; $("forceRow").hidden=true;
   setStatus(model?"분석 중이에요…":"AI 모델을 불러오는 중이에요… (처음 한 번만)");
   try{
     const [m,dn]=await Promise.all([loadModel(),force?null:loadDogNet()]);
     setStatus("분석 중이에요…");
-    const face=cropTensorCanvas();
+    const face=faceCrop.crop(224);
     if(dn&&!force){
       const pd=dogProbability(face);
       if(pd<0.1){setStatus("사진에서 강아지 얼굴을 찾지 못했어요. 얼굴이 틀 안에 꽉 차게 맞춰서 다시 해보세요.",true);$("forceRow").hidden=false;return}
@@ -830,7 +862,7 @@ async function analyze(force){
   }catch(e){
     console.error(e);
     setStatus(location.protocol==="file:"?"파일을 직접 열면 AI 모델을 못 불러와요. GitHub Pages 주소로 열어주세요.":"AI 모델을 불러오지 못했어요. 인터넷 연결을 확인하고 다시 눌러주세요.",true);
-  }finally{$("analyze").disabled=!img}
+  }finally{$("analyze").disabled=!faceCrop.loaded}
 }
 $("analyze").onclick=()=>analyze(false);
 $("forceBtn").onclick=()=>analyze(true);
@@ -919,7 +951,7 @@ $("shareBtn").onclick=async()=>{
 function closeShare(){$("shareModal").hidden=true;if(lastFocus)lastFocus.focus()}
 $("shareClose").onclick=closeShare;
 $("shareModal").addEventListener("click",e=>{if(e.target===$("shareModal"))closeShare()});
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("shareModal").hidden)closeShare()});
+document.addEventListener("keydown",e=>{if(e.key!=="Escape")return;if(!$("shareModal").hidden)closeShare();if(!$("pfModal").hidden)closePf()});
 
 /* ---------- 홈 화면에 추가 (PWA) ---------- */
 const standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
