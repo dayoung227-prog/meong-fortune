@@ -350,7 +350,7 @@ footer a{color:inherit}
       <button type="button" class="primary" id="shareNative" hidden>공유하기</button>
       <a class="btn" id="shareSave" download="meong-fortune.png">이미지 저장</a>
     </div>
-    <p class="note" style="text-align:center">저장이 안 되면 이미지를 길게 눌러 저장하세요.</p>
+    <p class="note" id="shareNote" style="text-align:center">저장이 안 되면 이미지를 길게 눌러 저장하세요.</p>
   </div>
 </div>
 
@@ -939,8 +939,22 @@ $("shareBtn").onclick=async()=>{
     const name=`멍운세-${active().name}-${todayKey}.png`;
     $("shareImg").src=shareUrl; $("shareSave").href=shareUrl; $("shareSave").download=name;
     const file=new File([shareBlob],name,{type:"image/png"});
-    $("shareNative").hidden=!(navigator.canShare&&navigator.canShare({files:[file]}));
-    $("shareNative").onclick=async()=>{try{await navigator.share({files:[file],title:"오늘의 멍운세"})}catch(e){}};
+    const canShareFile=!!(navigator.canShare&&navigator.canShare({files:[file]}));
+    // 아이폰·아이패드: 웹에서 사진첩으로 바로 저장할 수 없어서, 공유 메뉴의 '이미지 저장'이나 길게 눌러 저장하는 방법으로 안내
+    if(isIOS){
+      $("shareSave").hidden=true;
+      $("shareNative").hidden=!canShareFile;
+      $("shareNative").textContent="사진첩에 저장·공유";
+      $("shareNote").innerHTML=canShareFile
+        ?"버튼을 누르고 공유 메뉴에서 <b>'이미지 저장'</b>을 고르면 사진첩에 저장돼요.<br>또는 위 이미지를 길게 눌러 <b>'사진 앱에 저장'</b>을 눌러도 돼요."
+        :"위 이미지를 길게 누르고 <b>'사진 앱에 저장'</b>을 누르면 사진첩에 저장돼요.";
+    }else{
+      $("shareSave").hidden=false;
+      $("shareNative").hidden=!canShareFile;
+      $("shareNative").textContent="공유하기";
+      $("shareNote").textContent="저장이 안 되면 이미지를 길게 눌러 저장하세요.";
+    }
+    $("shareNative").onclick=async()=>{try{await navigator.share({files:[file]})}catch(e){}};
     $("shareModal").hidden=false; $("shareClose").focus();
   }catch(e){console.error(e)}finally{b.disabled=false}
 };
