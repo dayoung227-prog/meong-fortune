@@ -107,6 +107,7 @@ button:disabled{opacity:.5;cursor:default}
 .lucky{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:12px}
 .lucky div{background:#ffffff40;border-radius:4px;padding:6px 8px;min-width:0}
 .lucky b{display:block;font-size:13px}
+.luck-why{margin:-8px 0 0;font-size:11px;opacity:.75}
 .share-row{display:flex;justify-content:center;margin-top:-6px}
 .share-btn{display:inline-flex;align-items:center;gap:6px}
 .share-btn svg{width:16px;height:16px}
@@ -214,6 +215,7 @@ footer a{color:inherit}
         <div>행운의 놀이<b id="lItem"></b></div>
         <div>추천 방향<b id="lDir"></b></div>
       </div>
+      <p class="luck-why" id="lWhy"></p>
     </section>
     <div class="share-row">
       <button type="button" class="share-btn" id="shareBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 13v7h14v-7"/></svg>카드 이미지로 저장·공유</button>
@@ -260,6 +262,7 @@ footer a{color:inherit}
       <div class="basis">
         <p><strong>기분 (60%)</strong> · 강아지 감정 사진 수천 장으로 학습한 AI가 얼굴을 보고 화남·행복·편안·슬픔 비율을 계산해요. 행복 92점, 편안 80점, 슬픔 35점, 화남 15점을 기준으로 비율만큼 섞어 0~100점으로 바꿔요. 분석 전에 사진 속에 강아지가 있는지도 먼저 확인해요. 이 분석은 휴대폰 안에서만 이뤄지고 사진은 어디로도 전송되지 않아요.</p>
         <p><strong>일진운 (40%)</strong> · 생일로 만세력 일주(일간)와 띠(입춘 기준)를 계산하고, 오늘 일진의 천간과 일간 사이 십성(十星), 오늘 지지와 띠·일지 사이 육합·삼합·충을 반영해요. 같은 날엔 언제 봐도 같은 결과가 나와요.</p>
+        <p><strong>행운의 색·놀이·방향</strong> · 강아지 일간의 오행과 오늘 일진의 오행 관계를 보고 그날 필요한 기운을 골라요(기운이 겹치면 풀어주는 기운, 많이 쓰는 날엔 채워주는 기운, 부담되는 날엔 받쳐주는 기운). 색은 오방색 계열, 방향은 오방위를 따르고, 같은 기운 안에서도 색 5가지·놀이 8가지 중 날마다 다르게 골라져요.</p>
         <p>AI는 한 장면의 표정만 보고, 품종이나 사진 각도에 따라 틀릴 수 있어요. 건강이 걱정되면 수의사와 상담해주세요.</p>
       </div>
     </details>
@@ -437,13 +440,34 @@ function brRel(a,b){
   if(SANHE.some(g=>g.includes(a)&&g.includes(b)))return{k:"삼합",pt:6};
   return null;
 }
+/* 행운 아이템: 오행별 색(오방색 계열)·놀이·방향(오방위) */
 const LUCK=[
-  {color:"초록",item:"숲길 산책",dir:"동쪽"},
-  {color:"빨강",item:"공 던지기",dir:"남쪽"},
-  {color:"노랑",item:"흙길 냄새 탐색",dir:"가까운 동네"},
-  {color:"흰색",item:"새 개인기 연습",dir:"서쪽"},
-  {color:"파랑",item:"물놀이·시원한 간식",dir:"북쪽"}
+  {el:"목(나무)",dir:"동쪽",colors:["초록","연두","민트","올리브","청록"],
+   items:["숲길 산책","풀밭 냄새 탐색","새 산책 코스 개척","공원 벤치에서 사람 구경","풀숲 간식 찾기","로프 터그 놀이","천천히 오래 걷기","친구견과 함께 산책"]},
+  {el:"화(불)",dir:"남쪽",colors:["빨강","주황","다홍","핑크","보라"],
+   items:["공 던지기","전력 질주 놀이","원반 놀이","숨바꼭질","삑삑이 장난감 놀이","햇볕 아래 일광욕","신나는 개인기 쇼","짧고 굵은 달리기"]},
+  {el:"토(흙)",dir:"가까운 동네",colors:["노랑","베이지","갈색","머스터드","살구"],
+   items:["흙길 냄새 탐색","노즈워크 매트","간식 숨기기","모래밭 땅 파기","동네 한 바퀴","집 안 보물찾기","오래 씹는 간식 타임","보호자 무릎에서 쉬기"]},
+  {el:"금(쇠)",dir:"서쪽",colors:["흰색","은색","회색","아이보리","금색"],
+   items:["새 개인기 연습","'기다려' 연습","하이파이브 배우기","빗질·발 관리","장난감 정리 놀이","이름 부르면 오기 연습","퍼즐 장난감","5분 집중 훈련"]},
+  {el:"수(물)",dir:"북쪽",colors:["파랑","남색","검정","하늘색","청록빛 파랑"],
+   items:["물놀이","시원한 간식","냇가 산책","실내 노즈워크","얼음 장난감","목욕 후 수건 놀이","조용한 낮잠","잔잔한 음악 들으며 쉬기"]}
 ];
+/* 강아지 일간과 오늘 일진의 관계로 '오늘 필요한 기운'을 고름 (생일이 없으면 오늘 기운을 그대로 씀) */
+function luckFor(dog,df){
+  const tEl=stemEl(todayP.stem);
+  let el=tEl, why="오늘 일진의 기운이에요";
+  if(df){
+    const me=stemEl(df.dp.stem), gen=x=>(x+1)%5, mother=x=>(x+4)%5;
+    if(tEl===me){el=gen(me);why="같은 기운이 겹쳐 넘치는 힘을 풀어줄 기운이에요"}
+    else if(gen(me)===tEl){el=mother(me);why="기운을 많이 쓰는 날이라 채워줄 기운이에요"}
+    else if((me+2)%5===tEl){el=me;why="애쓰는 날이라 스스로를 받쳐줄 기운이에요"}
+    else if((tEl+2)%5===me){el=mother(me);why="부담을 부드럽게 풀어줄 기운이에요"}
+    else {el=gen(me);why="받은 기운을 즐겁게 써줄 기운이에요"}
+  }
+  const L=LUCK[el], seed=dog.id+"|"+todayKey+"|luck";
+  return{el:L.el,why,dir:L.dir,color:pick(L.colors,seed+"c"),item:pick(L.items,seed+"i")};
+}
 
 /* ---------- 오늘 (KST) ---------- */
 const parts=Object.fromEntries(new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Seoul",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date()).map(p=>[p.type,p.value]));
@@ -490,7 +514,7 @@ function computeLuck(dog){
   const verse=[]; // [plain, html]
   if(mood)verse.push([`지금 ${dog.name}(이)는 ${mood.state} 표정이에요.`,`지금 <strong>${esc(dog.name)}</strong>(이)는 <strong>${esc(mood.state)}</strong> 표정이에요.`]);
   if(df){verse.push([`오늘은 ${df.g.theme}. ${df.line}`,`오늘은 <strong>${df.g.theme}</strong>. ${df.line}`]); if(df.notes.length){const t=df.notes.join(", ")+" 기운이 함께해요.";verse.push([t,esc(t)])}}
-  return{dog,df,mood,total,sub,verse,luck:LUCK[stemEl(todayP.stem)]};
+  return{dog,df,mood,total,sub,verse,luck:luckFor(dog,df)};
 }
 
 /* ---------- 탭 ---------- */
@@ -527,6 +551,7 @@ function renderLuck(){
   if(dog.example)v.push(`'우리 강아지'에서 내 강아지를 등록해보세요.`);
   $("verse").innerHTML=v.join(" ");
   $("lColor").textContent=L.luck.color;$("lItem").textContent=L.luck.item;$("lDir").textContent=L.luck.dir;
+  $("lWhy").textContent=df?`${dog.name}에게 오늘 필요한 기운: ${L.luck.el} · ${L.luck.why}`:`오늘의 기운: ${L.luck.el} · 생일을 넣으면 ${dog.name}에게 맞춘 행운이 나와요`;
   renderMood(dog,mood);
   renderRank();
 }
@@ -868,9 +893,11 @@ async function drawCard(){
   lines.forEach((ln,i)=>g.fillText(ln,84,750+i*62));
   // 행운
   const lk=[["행운의 색",L.luck.color],["행운의 놀이",L.luck.item],["추천 방향",L.luck.dir]];
-  lk.forEach(([k,v],i)=>{const x=84+i*(296+12);g.fillStyle="rgba(255,255,255,.35)";g.fillRect(x,1150,296,104);
-    g.fillStyle=CARD.ink;g.globalAlpha=.75;g.font=`400 24px ${SANS}`;g.fillText(k,x+18,1190);g.globalAlpha=1;
-    fitFont(g,v,`700 {s}px ${SANS}`,30,260);g.fillText(v,x+18,1234)});
+  lk.forEach(([k,v],i)=>{const x=84+i*(296+12);g.fillStyle="rgba(255,255,255,.35)";g.fillRect(x,1126,296,132);
+    g.fillStyle=CARD.ink;g.globalAlpha=.75;g.font=`400 24px ${SANS}`;g.fillText(k,x+18,1164);g.globalAlpha=1;
+    g.font=`700 30px ${SANS}`;
+    if(g.measureText(v).width<=260){g.fillText(v,x+18,1212)}
+    else{g.font=`700 26px ${SANS}`;wrapLines(g,v,260).slice(0,2).forEach((ln,j)=>g.fillText(ln,x+18,1204+j*34))}});
   // 바닥
   g.fillStyle=CARD.ink;g.globalAlpha=.65;g.textAlign="center";g.font=`400 22px ${SANS}`;g.fillText(`운세는 재미로 즐겨주세요 · ${APP_URL}`,W/2,1296);g.globalAlpha=1;g.textAlign="left";
   return new Promise(r=>c.toBlob(r,"image/png"));
