@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>오늘의 멍운세</title>
+<meta name="description" content="강아지 얼굴 사진으로 기분 점수를 보고, 생일로 오늘의 일진운을 보는 무료 운세 앱">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: one narrow column like a fortune booth — two pages (운세 / 우리 강아지), the result as a talisman (부적) slip on yellow paper with cinnabar ink. */
+:root{
+  --bg:#f4f3ef; --surface:#ffffff; --fg:#22211f; --muted:#6c6862; --line:#dedad2;
+  --paper:#f3d96b; --paper-ink:#2a2208; --cinnabar:#b8261c; --cinnabar-soft:#b8261c1a;
+  --bad:#b8261c;
+  --c-angry:#c4511a; --c-happy:#b8261c; --c-relaxed:#5b6e2e; --c-sad:#3d5f8a;
+  --font-display:"Nanum Brush Script",cursive;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --font-data:"IBM Plex Mono",ui-monospace,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#17181b; --surface:#212226; --fg:#ecebe7; --muted:#a29e97; --line:#35363b;
+  --paper:#d9bd4f; --paper-ink:#1e1805; --cinnabar:#e2554a; --cinnabar-soft:#e2554a24;
+  --bad:#e2554a; --c-angry:#e98a4f; --c-happy:#e2554a; --c-relaxed:#9db35a; --c-sad:#7ea3d4;
+  color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;line-height:1.6;padding-inline:16px;padding-block:calc(20px + env(safe-area-inset-top,0px)) calc(48px + env(safe-area-inset-bottom,0px))}
+img{max-width:100%}
+[hidden]{display:none!important}
+.wrap{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+h1{font-family:var(--font-display);font-weight:400;font-size:44px;line-height:1;margin:0}
+.today{font-size:13px;color:var(--muted);text-align:right}
+.today b{color:var(--cinnabar);font-weight:600}
+nav.tabs{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+nav.tabs button{border:0;border-radius:0;background:transparent;padding:10px;font-weight:600;color:var(--muted)}
+nav.tabs button[aria-selected="true"]{background:var(--fg);color:var(--bg)}
+.page{display:flex;flex-direction:column;gap:18px}
+.sheet{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.sheet h2{margin:0;font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:wrap}
+.sheet h2 small{font-weight:400;color:var(--muted);font-size:12px}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);min-width:0}
+input[type=text],input[type=date]{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:8px 10px;width:100%}
+input:focus-visible,button:focus-visible,.chip:focus-within,label.btn:focus-within{outline:2px solid var(--cinnabar);outline-offset:2px}
+.check{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--muted)}
+button,label.btn{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--fg);padding:9px 14px;font-weight:600;display:inline-block;text-align:center}
+button.primary{background:var(--cinnabar);border-color:var(--cinnabar);color:#fff}
+button.ghost{background:transparent}
+button.danger{color:var(--bad);border-color:var(--bad);background:transparent}
+button:disabled{opacity:.5;cursor:default}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.chip span{display:inline-block;padding:6px 12px;border:1px solid var(--line);border-radius:99px;font-size:13px;background:var(--bg);font-weight:600}
+.chip input:checked + span{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.chips .add{padding:5px 12px;border-radius:99px;font-size:13px;border-style:dashed;background:transparent;color:var(--muted)}
+.note{font-size:12px;color:var(--muted);margin:0}
+.status{font-size:13px;color:var(--muted)}
+.status.err{color:var(--bad)}
+/* talisman */
+.bujeok{background:var(--paper);color:var(--paper-ink);border-radius:4px;padding:22px 20px 20px;position:relative;box-shadow:0 1px 0 #0000000f,0 10px 30px -18px #00000066;display:flex;flex-direction:column;gap:16px}
+.bujeok::before{content:"";position:absolute;inset:8px;border:1.5px solid var(--cinnabar);border-radius:2px;pointer-events:none;opacity:.8}
+.bujeok > *{position:relative}
+.b-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.b-name{font-family:var(--font-display);font-size:34px;line-height:1;color:var(--cinnabar)}
+.b-sub{font-size:12px;opacity:.75}
+.seal{width:84px;height:84px;flex:none;border:3px solid var(--cinnabar);border-radius:6px;color:var(--cinnabar);display:grid;place-items:center;transform:rotate(-4deg);text-align:center;line-height:1}
+.seal b{font-family:var(--font-data);font-size:30px;display:block;font-variant-numeric:tabular-nums}
+.seal i{font-style:normal;font-size:11px;font-weight:700;letter-spacing:.08em}
+.scores{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.sc{border-top:1.5px solid var(--cinnabar);padding-top:6px;min-width:0}
+.sc .k{font-size:11px;font-weight:700;letter-spacing:.04em;opacity:.8}
+.sc .v{font-family:var(--font-data);font-size:22px;font-variant-numeric:tabular-nums;line-height:1.2}
+.sc .d{font-size:12px}
+.verse{font-size:15px;line-height:1.7;margin:0}
+.verse strong{color:var(--cinnabar)}
+.lucky{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:12px}
+.lucky div{background:#ffffff40;border-radius:4px;padding:6px 8px;min-width:0}
+.lucky b{display:block;font-size:13px}
+/* cropper */
+.cropper{position:relative;width:100%;max-width:320px;aspect-ratio:1;margin:0 auto;border-radius:10px;overflow:hidden;background:var(--bg);border:1px dashed var(--line);touch-action:none;user-select:none;cursor:grab}
+.cropper.dragging{cursor:grabbing}
+.cropper canvas{display:block;width:100%;height:100%}
+.cropper .ph{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:var(--muted);font-size:13px;padding:20px;pointer-events:none}
+.cropper .frame{position:absolute;inset:10%;border:2px solid #fff;border-radius:50% 50% 46% 46%;box-shadow:0 0 0 999px #0000004d;pointer-events:none}
+.zoom{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted);max-width:320px;width:100%;margin:0 auto}
+.zoom input{flex:1}
+.filebtn{position:relative;overflow:hidden}
+.filebtn input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+.photo-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.moodbox{display:flex;flex-direction:column;gap:10px}
+.mood-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.mood-head .num{font-family:var(--font-data);font-size:34px;font-variant-numeric:tabular-nums;line-height:1}
+.mood-head .lbl{font-weight:700}
+.probs{display:flex;flex-direction:column;gap:6px}
+.prob{display:grid;grid-template-columns:52px 1fr 44px;gap:8px;align-items:center;font-size:13px}
+.prob .bar{height:10px;border-radius:99px;background:var(--bg);border:1px solid var(--line);overflow:hidden}
+.prob .bar i{display:block;height:100%;width:0;transition:width .6s ease}
+.prob .pct{font-family:var(--font-data);font-size:12px;text-align:right;font-variant-numeric:tabular-nums}
+.hist{display:flex;gap:6px;align-items:flex-end;height:44px}
+.hist i{flex:1;background:var(--cinnabar);opacity:.8;border-radius:2px 2px 0 0;min-height:2px}
+.hist-l{display:flex;gap:6px;font-size:10px;color:var(--muted);font-family:var(--font-data)}
+.hist-l span{flex:1;text-align:center}
+details{font-size:13px}
+details summary{cursor:pointer;font-weight:600}
+.basis{display:flex;flex-direction:column;gap:10px;margin-top:10px;color:var(--muted)}
+.basis p{margin:0}
+.basis strong{color:var(--fg)}
+.doglist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.doglist li{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.doglist li:first-child{border-top:0;padding-top:0}
+.doglist .ini{width:44px;height:44px;border-radius:50%;background:var(--paper);color:var(--cinnabar);display:grid;place-items:center;font-family:var(--font-display);font-size:24px}
+.doglist .meta{min-width:0}
+.doglist .meta b{display:block}
+.doglist .meta span{font-size:12px;color:var(--muted)}
+.empty{font-size:14px;color:var(--muted);text-align:center;padding:12px 0}
+footer{font-size:11px;color:var(--muted);line-height:1.6;text-align:center}
+footer a{color:inherit}
+@media (prefers-reduced-motion:reduce){.prob .bar i{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>오늘의 멍운세</h1>
+    <div class="today" id="today"></div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="페이지">
+    <button type="button" role="tab" id="tab-luck" aria-selected="true" aria-controls="page-luck">오늘의 운세</button>
+    <button type="button" role="tab" id="tab-dogs" aria-selected="false" aria-controls="page-dogs">우리 강아지</button>
+  </nav>
+
+  <!-- ===== 1페이지: 운세 ===== -->
+  <div class="page" id="page-luck" role="tabpanel" aria-labelledby="tab-luck">
+    <div class="chips" id="dogbar" aria-label="강아지 선택"></div>
+
+    <section class="bujeok" aria-label="오늘의 운세 결과">
+      <div class="b-top">
+        <div>
+          <div class="b-name" id="bName"></div>
+          <div class="b-sub" id="bSub"></div>
+        </div>
+        <div class="seal" aria-label="종합 멍운"><div><b id="total">··</b><i>종합 멍운</i></div></div>
+      </div>
+      <div class="scores">
+        <div class="sc"><div class="k">기분</div><div class="v" id="sMood">–</div><div class="d" id="dMood"></div></div>
+        <div class="sc"><div class="k">일진운</div><div class="v" id="sDay">–</div><div class="d" id="dDay"></div></div>
+      </div>
+      <p class="verse" id="verse"></p>
+      <div class="lucky">
+        <div>행운의 색<b id="lColor"></b></div>
+        <div>행운의 놀이<b id="lItem"></b></div>
+        <div>추천 방향<b id="lDir"></b></div>
+      </div>
+    </section>
+
+    <section class="sheet" aria-labelledby="h-photo">
+      <h2 id="h-photo">얼굴로 기분 읽기 <small>사진은 휴대폰 밖으로 나가지 않아요</small></h2>
+      <div class="cropper" id="cropper" aria-label="사진 위치 맞추기">
+        <canvas id="cv" width="640" height="640"></canvas>
+        <div class="frame" id="frame" hidden></div>
+        <div class="ph" id="ph">아래 버튼으로 사진을 고른 뒤<br>강아지 <b>얼굴</b>이 틀 안에 꽉 차게 맞춰주세요</div>
+      </div>
+      <div class="zoom" id="zoomRow" hidden>
+        <span>작게</span><input id="zoom" type="range" min="1" max="4" step="0.01" value="1" aria-label="확대"><span>크게</span>
+      </div>
+      <p class="note" id="cropTip" style="text-align:center" hidden>사진을 끌어서 옮기고, 막대로 확대해 얼굴만 틀 안에 넣어주세요. 몸 전체가 나오면 정확도가 떨어져요.</p>
+      <div class="photo-actions">
+        <label class="btn filebtn">사진 고르기<input id="file" type="file" accept="image/*" aria-label="강아지 사진 선택"></label>
+        <button class="primary" id="analyze" type="button" disabled>기분 분석하기</button>
+      </div>
+      <div class="status" id="pStatus" role="status" style="text-align:center"></div>
+
+      <div class="moodbox" id="moodBox" hidden>
+        <div class="mood-head"><span class="num" id="mNum"></span><span class="lbl" id="mLbl"></span></div>
+        <p class="verse" id="mSum" style="font-size:14px"></p>
+        <div class="probs" id="probs"></div>
+      </div>
+      <div id="histWrap" hidden>
+        <div class="note" style="margin-bottom:4px">최근 기분 기록</div>
+        <div class="hist" id="hist"></div>
+        <div class="hist-l" id="histL"></div>
+      </div>
+    </section>
+
+    <details class="sheet">
+      <summary>점수는 이렇게 계산해요</summary>
+      <div class="basis">
+        <p><strong>기분 (60%)</strong> · 강아지 감정 사진 수천 장으로 학습한 AI가 얼굴을 보고 화남·행복·편안·슬픔 비율을 계산해요. 행복 92점, 편안 80점, 슬픔 35점, 화남 15점을 기준으로 비율만큼 섞어 0~100점으로 바꿔요. 이 분석은 휴대폰 안에서만 이뤄지고 사진은 어디로도 전송되지 않아요.</p>
+        <p><strong>일진운 (40%)</strong> · 생일로 만세력 일주(일간)와 띠(입춘 기준)를 계산하고, 오늘 일진의 천간과 일간 사이 십성(十星), 오늘 지지와 띠·일지 사이 육합·삼합·충을 반영해요. 같은 날엔 언제 봐도 같은 결과가 나와요.</p>
+        <p>AI는 한 장면의 표정만 보고, 품종이나 사진 각도에 따라 틀릴 수 있어요. 운세는 재미로 즐겨주시고, 건강이 걱정되면 수의사와 상담해주세요.</p>
+      </div>
+    </details>
+  </div>
+
+  <!-- ===== 2페이지: 우리 강아지 ===== -->
+  <div class="page" id="page-dogs" role="tabpanel" aria-labelledby="tab-dogs" hidden>
+    <section class="sheet" aria-labelledby="h-list">
+      <h2 id="h-list">등록한 강아지 <small id="dogCount"></small></h2>
+      <ul class="doglist" id="doglist"></ul>
+      <button type="button" class="primary" id="addDog">+ 새 강아지 등록</button>
+    </section>
+
+    <section class="sheet" id="formSheet" aria-labelledby="h-form" hidden>
+      <h2 id="h-form">새 강아지 등록</h2>
+      <div class="row">
+        <label class="f">이름<input id="fName" type="text" maxlength="12" placeholder="예: 보리"></label>
+        <label class="f">생일 (양력)<input id="fBday" type="date"></label>
+      </div>
+      <label class="check"><input id="fNoBday" type="checkbox"> 생일을 몰라요 (일진운 없이 볼게요)</label>
+      <div class="status err" id="fErr" role="alert"></div>
+      <div class="btns">
+        <button type="button" class="primary" id="fSave">등록하기</button>
+        <button type="button" class="ghost" id="fCancel">취소</button>
+        <button type="button" class="danger" id="fDelete" hidden>삭제</button>
+      </div>
+    </section>
+    <p class="note">강아지 정보와 기분 기록은 이 기기의 브라우저에만 저장돼요.</p>
+  </div>
+
+  <footer>
+    감정 분석 모델 학습 데이터: <a href="https://universe.roboflow.com/2642025/dog-emotion-classification" target="_blank" rel="noopener">"dog emotion classification"</a> (Roboflow Universe, 2642025), <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a><br>
+    모델 제작: Google Teachable Machine · 운세는 재미로 즐겨주세요
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0/dist/tf.min.js"></script>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/* ---------- 만세력 ---------- */
+const STEM=["갑","을","병","정","무","기","경","신","임","계"], STEM_H="甲乙丙丁戊己庚辛壬癸";
+const BR=["자","축","인","묘","진","사","오","미","신","유","술","해"], BR_H="子丑寅卯辰巳午未申酉戌亥";
+const ANIMAL=["쥐","소","호랑이","토끼","용","뱀","말","양","원숭이","닭","개","돼지"];
+const EL=["목","화","토","금","수"];
+const stemEl=s=>Math.floor(s/2);
+function jdn(y,m,d){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045}
+function dayPillar(y,m,d){const i=((jdn(y,m,d)+49)%60+60)%60;return{stem:i%10,br:i%12,idx:i}}
+function sunLon(y,m,d){ // apparent solar longitude at 24:00 KST (15:00 UTC): 입춘 당일 출생은 새해로
+  const JD=jdn(y,m,d)-0.5+15/24, T=(JD-2451545)/36525, r=Math.PI/180;
+  const L0=280.46646+36000.76983*T, M=(357.52911+35999.05029*T)*r;
+  const C=(1.914602-0.004817*T)*Math.sin(M)+(0.019993-0.000101*T)*Math.sin(2*M)+0.000289*Math.sin(3*M);
+  const om=(125.04-1934.136*T)*r; let lon=L0+C-0.00569-0.00478*Math.sin(om);
+  return ((lon%360)+360)%360}
+function yearPillar(y,m,d){let Y=y;if(m===1||(m===2&&sunLon(y,m,d)<315))Y=y-1;return{stem:((Y-4)%10+10)%10,br:((Y-4)%12+12)%12}}
+const pName=p=>STEM[p.stem]+BR[p.br]+" "+STEM_H[p.stem]+BR_H[p.br];
+function tenGod(dayStem,otherStem){
+  const a=stemEl(dayStem),b=stemEl(otherStem),same=(dayStem%2)===(otherStem%2);
+  if(a===b)return same?"비견":"겁재";
+  if((a+1)%5===b)return same?"식신":"상관";
+  if((a+2)%5===b)return same?"편재":"정재";
+  if((b+2)%5===a)return same?"편관":"정관";
+  return same?"편인":"정인";
+}
+const GOD={
+  "비견":{base:74,theme:"친구운",line:"마음 맞는 친구견을 만나기 좋은 날이에요. 낯선 강아지에게도 비교적 너그러워요."},
+  "겁재":{base:62,theme:"경쟁운",line:"장난감·간식 쟁탈전이 벌어질 수 있어요. 여러 마리라면 밥그릇 간격을 넓혀주세요."},
+  "식신":{base:86,theme:"먹을운",line:"식욕도 기분도 좋은 날. 노즈워크처럼 먹으면서 노는 놀이가 잘 맞아요. 과식만 주의!"},
+  "상관":{base:68,theme:"표현운",line:"하고 싶은 말이 많은 날이에요. 짖음이나 투정이 늘 수 있으니 에너지를 충분히 풀어주세요."},
+  "편재":{base:78,theme:"득템운",line:"산책길에서 뭔가 발견하는 운이에요. 단, 바닥 줍줍은 꼭 막아주세요."},
+  "정재":{base:82,theme:"보상운",line:"잘한 일에 칭찬과 간식이 따라오는 날. 훈련 보상이 유난히 잘 먹혀요."},
+  "편관":{base:56,theme:"긴장운",line:"낯선 소리나 사람에게 예민할 수 있어요. 새로운 장소보다 익숙한 코스를 추천해요."},
+  "정관":{base:70,theme:"규칙운",line:"루틴을 지키기 좋은 날이에요. '앉아·기다려' 같은 기본기를 복습하면 효과가 좋아요."},
+  "편인":{base:64,theme:"휴식운",line:"혼자 쉬고 싶은 날이에요. 낮잠은 방해하지 말아주세요."},
+  "정인":{base:84,theme:"사랑운",line:"보호자 손길이 제일 반가운 날. 빗질이나 마사지로 스킨십을 늘려보세요."}
+};
+const LIUHE=[[0,1],[2,11],[3,10],[4,9],[5,8],[6,7]];
+const SANHE=[[8,0,4],[2,6,10],[5,9,1],[11,3,7]];
+function brRel(a,b){
+  if(a===b)return null;
+  if(LIUHE.some(([x,y])=>(x===a&&y===b)||(x===b&&y===a)))return{k:"육합",pt:10};
+  if(Math.abs(a-b)===6)return{k:"충",pt:-12};
+  if(SANHE.some(g=>g.includes(a)&&g.includes(b)))return{k:"삼합",pt:6};
+  return null;
+}
+const LUCK=[
+  {color:"초록",item:"숲길 산책",dir:"동쪽"},
+  {color:"빨강",item:"공 던지기",dir:"남쪽"},
+  {color:"노랑",item:"흙길 냄새 탐색",dir:"가까운 동네"},
+  {color:"흰색",item:"새 개인기 연습",dir:"서쪽"},
+  {color:"파랑",item:"물놀이·시원한 간식",dir:"북쪽"}
+];
+
+/* ---------- 오늘 (KST) ---------- */
+const parts=Object.fromEntries(new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Seoul",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date()).map(p=>[p.type,p.value]));
+const TY=+parts.year,TM=+parts.month,TD=+parts.day, todayKey=`${TY}-${parts.month}-${parts.day}`;
+const todayP=dayPillar(TY,TM,TD);
+$("today").innerHTML=`${TY}년 ${TM}월 ${TD}일<br><b>${pName(todayP)}일</b>`;
+
+/* ---------- 강아지 데이터 ---------- */
+const EXAMPLE={id:"example",name:"보리",bday:"2021-05-17",noB:false,example:true};
+let dogs=store.get("meong.dogs"); if(!Array.isArray(dogs))dogs=[];
+let activeId=store.get("meong.active");
+const shown=()=>dogs.length?dogs:[EXAMPLE];
+const active=()=>shown().find(d=>d.id===activeId)||shown()[0];
+const saveDogs=()=>{store.set("meong.dogs",dogs);store.set("meong.active",activeId)};
+const moodKey=id=>"meong.mood."+id, histKey=id=>"meong.hist."+id;
+function getMood(id){const m=store.get(moodKey(id));return m&&m.date===todayKey?m:null}
+
+/* ---------- 일진운 ---------- */
+function dayFortune(dog){
+  if(!dog||dog.noB||!dog.bday)return null;
+  const [y,m,d]=dog.bday.split("-").map(Number);
+  if(!y||!m||!d)return null;
+  const dp=dayPillar(y,m,d), yp=yearPillar(y,m,d);
+  const god=tenGod(dp.stem,todayP.stem), g=GOD[god];
+  let s=g.base; const notes=[];
+  const r1=brRel(todayP.br,yp.br), r2=brRel(todayP.br,dp.br);
+  if(r1){s+=r1.pt;notes.push(`오늘 일지(${BR[todayP.br]})와 ${ANIMAL[yp.br]}띠가 ${r1.k}`)}
+  if(r2&&!(r1&&r1.k===r2.k)){s+=Math.round(r2.pt/2);notes.push(`일주 지지(${BR[dp.br]})와 ${r2.k}`)}
+  return{s:Math.max(5,Math.min(100,s)),god,g,dp,yp,notes};
+}
+function dogSummary(d){
+  const df=dayFortune(d);
+  return df?`${ANIMAL[df.yp.br]}띠 · 일주 ${STEM[df.dp.stem]}${BR[df.dp.br]} (${EL[stemEl(df.dp.stem)]}) · ${d.bday.replace(/-/g,".")}생`:"생일 미등록";
+}
+
+/* ---------- 탭 ---------- */
+function showTab(which){
+  const luck=which!=="dogs";
+  $("page-luck").hidden=!luck;$("page-dogs").hidden=luck;
+  $("tab-luck").setAttribute("aria-selected",luck);$("tab-dogs").setAttribute("aria-selected",!luck);
+  if(!luck)renderDogs();else renderLuck();
+}
+$("tab-luck").onclick=()=>showTab("luck");
+$("tab-dogs").onclick=()=>showTab("dogs");
+
+/* ---------- 운세 페이지 ---------- */
+function renderDogbar(){
+  const a=active();
+  $("dogbar").innerHTML=shown().map(d=>`<label class="chip"><input type="radio" name="dogpick" value="${esc(d.id)}" ${d.id===a.id?"checked":""}><span>${esc(d.name)}${d.example?" (예시)":""}</span></label>`).join("")+`<button type="button" class="add" id="barAdd">+ 강아지 추가</button>`;
+  $("dogbar").querySelectorAll("input[name=dogpick]").forEach(r=>r.addEventListener("change",()=>{activeId=r.value;saveDogs();renderLuck()}));
+  $("barAdd").onclick=()=>{showTab("dogs");openForm(null)};
+}
+function renderLuck(){
+  renderDogbar();
+  const dog=active(), mood=getMood(dog.id), df=dayFortune(dog);
+  $("bName").textContent=dog.name;
+  $("bSub").textContent=(df?`${ANIMAL[df.yp.br]}띠 · 일주 ${STEM[df.dp.stem]}${BR[df.dp.br]} (${EL[stemEl(df.dp.stem)]})`:"생일 없이 보는 운세")+(dog.example?" · 예시 강아지":"");
+  if(df){$("sDay").textContent=df.s;$("dDay").textContent=`${df.g.theme} · ${df.god}`}else{$("sDay").textContent="–";$("dDay").textContent="생일 필요"}
+  if(mood){$("sMood").textContent=mood.score;$("dMood").textContent=mood.state}else{$("sMood").textContent="–";$("dMood").textContent="얼굴 사진 필요"}
+  const ps=[]; if(df)ps.push([df.s,40]); if(mood)ps.push([mood.score,60]);
+  const tw=ps.reduce((a,b)=>a+b[1],0);
+  $("total").textContent=mood&&tw?Math.round(ps.reduce((a,b)=>a+b[0]*b[1],0)/tw):"··";
+  const v=[];
+  if(mood)v.push(`지금 <strong>${esc(dog.name)}</strong>(이)는 <strong>${esc(mood.state)}</strong> 표정이에요.`);
+  if(df){v.push(`오늘은 <strong>${df.g.theme}</strong>. ${df.g.line}`); if(df.notes.length)v.push(df.notes.join(", ")+" 기운이 함께해요.");}
+  if(!mood)v.push(`얼굴 사진을 올리면 기분 점수까지 더해 종합 멍운을 봐드려요.`);
+  if(dog.example)v.push(`'우리 강아지'에서 내 강아지를 등록해보세요.`);
+  $("verse").innerHTML=v.join(" ");
+  const L=LUCK[stemEl(todayP.stem)];
+  $("lColor").textContent=L.color;$("lItem").textContent=L.item;$("lDir").textContent=L.dir;
+  renderMood(dog,mood);
+}
+const LABEL_KO={angry:"화남",happy:"행복",relaxed:"편안",sad:"슬픔"};
+function renderMood(dog,mood){
+  if(!mood){$("moodBox").hidden=true}else{
+    $("moodBox").hidden=false;
+    $("mNum").textContent=mood.score;$("mLbl").textContent=mood.state;
+    $("mSum").textContent=mood.summary;
+    $("probs").innerHTML=mood.probs.map(p=>`<div class="prob"><span>${LABEL_KO[p.k]}</span><span class="bar"><i style="background:var(--c-${p.k})" data-w="${(p.v*100).toFixed(1)}"></i></span><span class="pct">${Math.round(p.v*100)}%</span></div>`).join("");
+    requestAnimationFrame(()=>$("probs").querySelectorAll("i").forEach(i=>i.style.width=i.dataset.w+"%"));
+  }
+  const h=(store.get(histKey(dog.id))||[]).slice(-7);
+  $("histWrap").hidden=h.length<2;
+  $("hist").innerHTML=h.map(x=>`<i style="height:${Math.max(4,x.score)}%" title="${x.date}: ${x.score}점"></i>`).join("");
+  $("histL").innerHTML=h.map(x=>`<span>${x.date.slice(5).replace("-","/")}</span>`).join("");
+}
+
+/* ---------- 강아지 관리 ---------- */
+let editingId=null, delArmed=false;
+function renderDogs(){
+  $("dogCount").textContent=dogs.length?`${dogs.length}마리`:"";
+  if(!dogs.length){$("doglist").innerHTML=`<li style="display:block;border:0;padding:0"><div class="empty">아직 등록한 강아지가 없어요.<br>아래 버튼으로 첫 강아지를 등록해주세요.</div></li>`;return}
+  $("doglist").innerHTML=dogs.map(d=>`<li><div class="ini" aria-hidden="true">${esc(d.name.slice(0,1))}</div><div class="meta"><b>${esc(d.name)}</b><span>${esc(dogSummary(d))}</span></div><button type="button" data-edit="${esc(d.id)}">수정</button></li>`).join("");
+  $("doglist").querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>openForm(b.dataset.edit));
+}
+function openForm(id){
+  editingId=id; delArmed=false;
+  const d=id?dogs.find(x=>x.id===id):null;
+  $("formSheet").hidden=false;
+  $("h-form").textContent=d?`${d.name} 정보 수정`:"새 강아지 등록";
+  $("fName").value=d?d.name:"";$("fBday").value=d?d.bday:"";$("fNoBday").checked=d?!!d.noB:false;
+  $("fBday").disabled=$("fNoBday").checked;
+  $("fSave").textContent=d?"저장하기":"등록하기";
+  $("fDelete").hidden=!d;$("fDelete").textContent="삭제";
+  $("fErr").textContent="";
+  $("fName").focus();
+}
+function closeForm(){$("formSheet").hidden=true;editingId=null}
+$("addDog").onclick=()=>openForm(null);
+$("fCancel").onclick=closeForm;
+$("fNoBday").onchange=()=>{$("fBday").disabled=$("fNoBday").checked};
+$("fSave").onclick=()=>{
+  const name=$("fName").value.trim(), noB=$("fNoBday").checked, bday=$("fBday").value;
+  if(!name){$("fErr").textContent="이름을 입력해주세요.";return}
+  if(!noB&&!bday){$("fErr").textContent="생일을 입력하거나 '생일을 몰라요'를 체크해주세요.";return}
+  if(!noB&&bday>todayKey){$("fErr").textContent="생일이 오늘보다 늦어요. 날짜를 확인해주세요.";return}
+  const data={name,bday:noB?"":bday,noB};
+  if(editingId){Object.assign(dogs.find(x=>x.id===editingId),data)}
+  else{const id="d"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);dogs.push({id,...data});activeId=id}
+  saveDogs();closeForm();renderDogs();
+};
+$("fDelete").onclick=()=>{
+  if(!editingId)return;
+  if(!delArmed){delArmed=true;$("fDelete").textContent="한 번 더 누르면 삭제돼요";return}
+  const id=editingId;
+  dogs=dogs.filter(x=>x.id!==id); store.del(moodKey(id)); store.del(histKey(id));
+  if(activeId===id)activeId=dogs[0]?dogs[0].id:null;
+  saveDogs();closeForm();renderDogs();
+};
+
+/* ---------- 사진 맞추기 (crop) ---------- */
+const cv=$("cv"), ctx=cv.getContext("2d"), cropper=$("cropper");
+let img=null, scale=1, base=1, ox=0, oy=0; // ox,oy: image top-left in canvas px
+const FR={x:0.1,y:0.1,s:0.8}; // face frame (fraction of canvas)
+function draw(){
+  ctx.clearRect(0,0,cv.width,cv.height);
+  if(!img)return;
+  const w=img.width*base*scale,h=img.height*base*scale;
+  ctx.drawImage(img,ox,oy,w,h);
+}
+function clamp(){
+  const w=img.width*base*scale,h=img.height*base*scale, W=cv.width;
+  const fx=FR.x*W, fy=FR.y*W, fs=FR.s*W;
+  ox=Math.min(fx,Math.max(fx+fs-w,ox)); oy=Math.min(fy,Math.max(fy+fs-h,oy));
+}
+function setZoom(z){
+  if(!img)return;
+  const W=cv.width, cx=W/2, cy=W/2;
+  const ix=(cx-ox)/(base*scale), iy=(cy-oy)/(base*scale);
+  scale=z; ox=cx-ix*base*scale; oy=cy-iy*base*scale; clamp(); draw();
+}
+$("file").addEventListener("change",e=>{
+  const f=e.target.files&&e.target.files[0]; if(!f)return;
+  const url=URL.createObjectURL(f), im=new Image();
+  im.onload=()=>{
+    img=im; const W=cv.width;
+    base=(FR.s*W)/Math.min(im.width,im.height); scale=1; $("zoom").value=1;
+    ox=(W-im.width*base)/2; oy=(W-im.height*base)/2; clamp(); draw();
+    $("ph").hidden=true;$("frame").hidden=false;$("zoomRow").hidden=false;$("cropTip").hidden=false;
+    $("analyze").disabled=false; setStatus("");
+  };
+  im.onerror=()=>setStatus("이 사진을 열 수 없어요. 다른 사진으로 시도해주세요.",true);
+  im.src=url;
+});
+$("zoom").addEventListener("input",e=>setZoom(Number(e.target.value)));
+let drag=null; const pts=new Map(); let pinch=null;
+const toCanvas=(e)=>{const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)*cv.width/r.width,y:(e.clientY-r.top)*cv.height/r.height}};
+cropper.addEventListener("pointerdown",e=>{if(!img)return;cropper.setPointerCapture(e.pointerId);pts.set(e.pointerId,toCanvas(e));
+  if(pts.size===1){const p=toCanvas(e);drag={x:p.x,y:p.y,ox,oy};cropper.classList.add("dragging")}
+  if(pts.size===2){const [a,b]=[...pts.values()];pinch={d:Math.hypot(a.x-b.x,a.y-b.y),z:scale};drag=null}});
+cropper.addEventListener("pointermove",e=>{if(!img||!pts.has(e.pointerId))return;pts.set(e.pointerId,toCanvas(e));
+  if(pinch&&pts.size===2){const [a,b]=[...pts.values()];const z=Math.max(1,Math.min(4,pinch.z*Math.hypot(a.x-b.x,a.y-b.y)/pinch.d));$("zoom").value=z;setZoom(z);return}
+  if(drag){const p=toCanvas(e);ox=drag.ox+(p.x-drag.x);oy=drag.oy+(p.y-drag.y);clamp();draw()}});
+const up=e=>{pts.delete(e.pointerId);if(pts.size<2)pinch=null;if(!pts.size){drag=null;cropper.classList.remove("dragging")}};
+cropper.addEventListener("pointerup",up);cropper.addEventListener("pointercancel",up);
+cropper.addEventListener("wheel",e=>{if(!img)return;e.preventDefault();const z=Math.max(1,Math.min(4,scale*(e.deltaY<0?1.08:0.92)));$("zoom").value=z;setZoom(z)},{passive:false});
+
+/* ---------- 감정 분석 (TensorFlow.js, 기기 안에서만 실행) ---------- */
+let model=null, labels=["angry","happy","relaxed","sad"];
+function setStatus(t,err){$("pStatus").textContent=t;$("pStatus").classList.toggle("err",!!err)}
+async function loadModel(){
+  if(model)return model;
+  if(!window.tf)throw new Error("tf");
+  try{const meta=await (await fetch("model/metadata.json")).json(); if(Array.isArray(meta.labels))labels=meta.labels}catch(e){}
+  model=await tf.loadLayersModel("model/model.json");
+  return model;
+}
+const VALUE={happy:92,relaxed:80,sad:35,angry:15};
+function soften(p,T){ // 극단적인 100%를 완만하게: log 확률을 온도 T로 나눠 다시 정규화
+  const l=p.map(x=>Math.log(Math.max(x,1e-7))/T), m=Math.max(...l), e=l.map(x=>Math.exp(x-m)), s=e.reduce((a,b)=>a+b,0);
+  return e.map(x=>x/s);
+}
+function moodText(top,score,name){
+  const n=esc(name);
+  const T={
+    happy:[["아주 신남","입꼬리가 올라가고 표정이 밝아요. 지금 기분 최고예요!"],["기분 좋음","밝은 표정이에요. 놀아주면 더 신날 것 같아요."]],
+    relaxed:[["편안함","긴장 없이 느긋한 얼굴이에요. 마음이 편한 상태예요."],["나른함","차분하고 조용한 표정이에요. 쉬고 싶은 걸 수도 있어요."]],
+    sad:[["시무룩","조금 처진 표정이에요. 다정하게 쓰다듬어 주세요."],["울적함","기운이 없어 보여요. 오늘은 곁에 있어 주세요."]],
+    angry:[["예민함","얼굴에 긴장이 보여요. 잠시 혼자 둘 시간을 주세요."],["화남","경계하는 표정이에요. 억지로 만지지 말고 기다려주세요."]]
+  }[top];
+  const idx=(top==="happy"||top==="relaxed")?(score>=80?0:1):(score>=35?0:1);
+  return{state:T[idx][0],summary:T[idx][1]};
+}
+function cropTensorCanvas(){
+  const out=document.createElement("canvas");out.width=224;out.height=224;
+  const W=cv.width, sx=(FR.x*W-ox)/(base*scale), sy=(FR.y*W-oy)/(base*scale), ss=(FR.s*W)/(base*scale);
+  out.getContext("2d").drawImage(img,sx,sy,ss,ss,0,0,224,224);
+  return out;
+}
+$("analyze").onclick=async()=>{
+  if(!img)return;
+  const dog=active();
+  $("analyze").disabled=true;
+  setStatus(model?"분석 중이에요…":"AI 모델을 불러오는 중이에요… (처음 한 번만, 2MB)");
+  try{
+    const m=await loadModel();
+    setStatus("분석 중이에요…");
+    const raw=tf.tidy(()=>{
+      const x=tf.browser.fromPixels(cropTensorCanvas()).toFloat().sub(127.5).div(127.5).expandDims(0);
+      return m.predict(x).dataSync();
+    });
+    const p=soften(Array.from(raw),3);
+    const probs=labels.map((k,i)=>({k,v:p[i]})).filter(x=>VALUE[x.k]!==undefined);
+    const score=Math.round(probs.reduce((a,x)=>a+x.v*VALUE[x.k],0));
+    const top=probs.slice().sort((a,b)=>b.v-a.v)[0].k;
+    const t=moodText(top,score,dog.name);
+    const mood={date:todayKey,score,state:t.state,summary:t.summary,probs:probs.sort((a,b)=>b.v-a.v)};
+    store.set(moodKey(dog.id),mood);
+    const h=(store.get(histKey(dog.id))||[]).filter(x=>x.date!==todayKey); h.push({date:todayKey,score}); store.set(histKey(dog.id),h.slice(-30));
+    setStatus("분석했어요. 위 부적에 반영됐어요.");
+    renderLuck();
+  }catch(e){
+    console.error(e);
+    setStatus(location.protocol==="file:"?"파일을 직접 열면 AI 모델을 못 불러와요. GitHub Pages 주소로 열어주세요.":"AI 모델을 불러오지 못했어요. 인터넷 연결을 확인하고 다시 눌러주세요.",true);
+  }finally{$("analyze").disabled=!img}
+};
+
+showTab(location.hash==="#dogs"?"dogs":"luck");
+})();
+</script>
+</body>
+</html>
