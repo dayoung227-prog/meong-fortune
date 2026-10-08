@@ -82,6 +82,11 @@ button:disabled{opacity:.5;cursor:default}
 .sc .k{font-size:11px;font-weight:700;letter-spacing:.04em;opacity:.8}
 .sc .v{font-family:var(--font-data);font-size:22px;font-variant-numeric:tabular-nums;line-height:1.2}
 .sc .d{font-size:12px}
+.sc > span{display:block}
+.sc-btn{font:inherit;color:inherit;background:transparent;border:0;border-top:1.5px solid var(--cinnabar);border-radius:0;padding:6px 0 0;text-align:left;cursor:pointer;font-weight:400}
+.sc-btn .d{text-decoration:underline;text-underline-offset:3px;font-weight:600}
+.sc-btn:hover .d{color:var(--cinnabar)}
+.sheet h2 .close{padding:4px 10px;font-size:12px;font-weight:600}
 .verse{font-size:15px;line-height:1.7;margin:0}
 .verse strong{color:var(--cinnabar)}
 .lucky{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:12px}
@@ -155,8 +160,8 @@ footer a{color:inherit}
         <div class="seal" aria-label="종합 멍운"><div><b id="total">··</b><i>종합 멍운</i></div></div>
       </div>
       <div class="scores">
-        <div class="sc"><div class="k">기분</div><div class="v" id="sMood">–</div><div class="d" id="dMood"></div></div>
         <div class="sc"><div class="k">일진운</div><div class="v" id="sDay">–</div><div class="d" id="dDay"></div></div>
+        <button type="button" class="sc sc-btn" id="moodTile" aria-controls="photoSheet"><span class="k">기분</span><span class="v" id="sMood">–</span><span class="d" id="dMood"></span></button>
       </div>
       <p class="verse" id="verse"></p>
       <div class="lucky">
@@ -166,8 +171,8 @@ footer a{color:inherit}
       </div>
     </section>
 
-    <section class="sheet" aria-labelledby="h-photo">
-      <h2 id="h-photo">얼굴로 기분 읽기 <small>사진은 휴대폰 밖으로 나가지 않아요</small></h2>
+    <section class="sheet" id="photoSheet" aria-labelledby="h-photo" hidden>
+      <h2 id="h-photo"><span>얼굴로 기분 읽기 <small>사진은 휴대폰 밖으로 나가지 않아요</small></span><button type="button" class="ghost close" id="closePhoto" aria-label="닫기">닫기</button></h2>
       <div class="cropper" id="cropper" aria-label="사진 위치 맞추기">
         <canvas id="cv" width="640" height="640"></canvas>
         <div class="frame" id="frame" hidden></div>
@@ -347,7 +352,7 @@ $("tab-dogs").onclick=()=>showTab("dogs");
 function renderDogbar(){
   const a=active();
   $("dogbar").innerHTML=shown().map(d=>`<label class="chip"><input type="radio" name="dogpick" value="${esc(d.id)}" ${d.id===a.id?"checked":""}><span>${esc(d.name)}${d.example?" (예시)":""}</span></label>`).join("")+`<button type="button" class="add" id="barAdd">+ 강아지 추가</button>`;
-  $("dogbar").querySelectorAll("input[name=dogpick]").forEach(r=>r.addEventListener("change",()=>{activeId=r.value;saveDogs();renderLuck()}));
+  $("dogbar").querySelectorAll("input[name=dogpick]").forEach(r=>r.addEventListener("change",()=>{activeId=r.value;saveDogs();closePhoto();renderLuck()}));
   $("barAdd").onclick=()=>{showTab("dogs");openForm(null)};
 }
 function renderLuck(){
@@ -356,7 +361,7 @@ function renderLuck(){
   $("bName").textContent=dog.name;
   $("bSub").textContent=(df?`${ANIMAL[df.yp.br]}띠 · 일주 ${STEM[df.dp.stem]}${BR[df.dp.br]} (${EL[stemEl(df.dp.stem)]})`:"생일 없이 보는 운세")+(dog.example?" · 예시 강아지":"");
   if(df){$("sDay").textContent=df.s;$("dDay").textContent=`${df.g.theme} · ${df.god}`}else{$("sDay").textContent="–";$("dDay").textContent="생일 필요"}
-  if(mood){$("sMood").textContent=mood.score;$("dMood").textContent=mood.state}else{$("sMood").textContent="–";$("dMood").textContent="얼굴 사진 필요"}
+  if(mood){$("sMood").textContent=mood.score;$("dMood").textContent=mood.state+" · 자세히"}else{$("sMood").textContent="–";$("dMood").textContent="얼굴 사진 필요"}
   const ps=[]; if(df)ps.push([df.s,40]); if(mood)ps.push([mood.score,60]);
   const tw=ps.reduce((a,b)=>a+b[1],0);
   $("total").textContent=mood&&tw?Math.round(ps.reduce((a,b)=>a+b[0]*b[1],0)/tw):"··";
@@ -463,6 +468,21 @@ $("file").addEventListener("change",e=>{
   im.src=url;
 });
 $("zoom").addEventListener("input",e=>setZoom(Number(e.target.value)));
+
+/* 기분 칸을 누르면 사진 영역 열기 */
+function resetPhoto(){
+  img=null; $("file").value=""; ctx.clearRect(0,0,cv.width,cv.height);
+  $("ph").hidden=false;$("frame").hidden=true;$("zoomRow").hidden=true;$("cropTip").hidden=true;
+  $("analyze").disabled=true; setStatus("");
+}
+function closePhoto(){ $("photoSheet").hidden=true; resetPhoto(); }
+$("closePhoto").onclick=()=>{closePhoto();$("moodTile").focus()};
+$("moodTile").onclick=()=>{
+  const opening=$("photoSheet").hidden;
+  $("photoSheet").hidden=false;
+  $("photoSheet").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
+  if(opening&&!getMood(active().id))$("file").click(); // 기분 기록이 없으면 바로 사진 고르기 창 열기
+};
 let drag=null; const pts=new Map(); let pinch=null;
 const toCanvas=(e)=>{const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)*cv.width/r.width,y:(e.clientY-r.top)*cv.height/r.height}};
 cropper.addEventListener("pointerdown",e=>{if(!img)return;cropper.setPointerCapture(e.pointerId);pts.set(e.pointerId,toCanvas(e));
