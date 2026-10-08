@@ -1,6 +1,6 @@
 // 오늘의 멍운세 서비스워커: 한 번 열어본 뒤에는 인터넷 없이도 열리게 저장해둠
 // 앱 파일을 바꿀 때 VERSION 숫자를 올리면 옛 저장분이 정리돼요.
-const VERSION = "meong-v2";
+const VERSION = "meong-v3";
 const CORE = [
   "./",
   "./index.html",

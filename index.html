@@ -159,6 +159,12 @@ details summary{cursor:pointer;font-weight:600}
 .doglist .meta span{font-size:12px;color:var(--muted)}
 .pf{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .empty{font-size:14px;color:var(--muted);text-align:center;padding:12px 0}
+.tip{background:var(--bg);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:6px}
+.tip b{color:var(--fg)}
+.tip ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:2px}
+.tip strong{color:var(--cinnabar)}
+.tip-now{margin:0;font-weight:600;color:var(--cinnabar)}
+.tip-now:empty{display:none}
 .confirm{display:flex;flex-direction:column;gap:8px;background:var(--bg);border-radius:8px;padding:10px 12px}
 /* modal */
 .modal{position:fixed;inset:0;z-index:20;background:#000a;display:grid;place-items:center;padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px))}
@@ -265,6 +271,15 @@ footer a{color:inherit}
       <h2 id="h-list">등록한 강아지 <small id="dogCount"></small></h2>
       <ul class="doglist" id="doglist"></ul>
       <button type="button" class="primary" id="addDog">+ 새 강아지 등록</button>
+      <div class="tip" id="multiTip">
+        <b>여러 마리를 키우고 있나요?</b>
+        <ul>
+          <li>2마리 이상 등록하면 '오늘의 운세'에서 <strong>오늘의 멍운 순위</strong>를 알려줘요.</li>
+          <li>운세 화면 위쪽에서 강아지를 골라 한 마리씩 운세를 볼 수 있어요.</li>
+          <li>기분 점수와 기록은 강아지마다 따로 저장돼요.</li>
+        </ul>
+        <p class="tip-now" id="multiNow"></p>
+      </div>
     </section>
 
     <section class="sheet" id="formSheet" aria-labelledby="h-form" hidden>
@@ -545,6 +560,7 @@ function renderRank(){
 let editingId=null, delArmed=false, formPhoto=null;
 function renderDogs(){
   $("dogCount").textContent=dogs.length?`${dogs.length}마리`:"";
+  $("multiNow").textContent=dogs.length>=2?`지금 ${dogs.length}마리라 '오늘의 운세'에서 순위를 볼 수 있어요.`:dogs.length===1?"한 마리만 더 등록하면 순위가 나타나요.":"";
   if(!dogs.length){$("doglist").innerHTML=`<li style="display:block;border:0;padding:0"><div class="empty">아직 등록한 강아지가 없어요.<br>아래 버튼으로 첫 강아지를 등록해주세요.</div></li>`;return}
   $("doglist").innerHTML=dogs.map(d=>`<li>${avatar(d,"m")}<div class="meta"><b>${esc(d.name)}</b><span>${esc(dogSummary(d))}</span></div><button type="button" data-edit="${esc(d.id)}">수정</button></li>`).join("");
   $("doglist").querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>openForm(b.dataset.edit));
