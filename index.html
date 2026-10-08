@@ -84,8 +84,12 @@ button:disabled{opacity:.5;cursor:default}
 .sc .d{font-size:12px}
 .sc > span{display:block}
 .sc-btn{font:inherit;color:inherit;background:transparent;border:0;border-top:1.5px solid var(--cinnabar);border-radius:0;padding:6px 0 0;text-align:left;cursor:pointer;font-weight:400}
-.sc-btn .d{text-decoration:underline;text-underline-offset:3px;font-weight:600}
-.sc-btn:hover .d{color:var(--cinnabar)}
+.sc-btn .d{display:inline-flex;align-items:center;gap:5px;margin-top:4px;padding:5px 11px 5px 9px;border-radius:99px;background:var(--cinnabar);color:#fff;font-weight:700;font-size:12px;line-height:1.2;animation:nudge 2.2s ease-in-out infinite}
+.sc-btn .d svg{width:14px;height:14px;flex:none}
+.sc-btn.done .d{background:transparent;color:var(--cinnabar);border:1.5px solid var(--cinnabar);padding:3px 10px;animation:none}
+.sc-btn:hover .d{filter:brightness(1.08)}
+@keyframes nudge{0%,100%{box-shadow:0 0 0 0 #b8261c55}50%{box-shadow:0 0 0 6px #b8261c00}}
+@media (prefers-reduced-motion:reduce){.sc-btn .d{animation:none}}
 .sheet h2 .close{padding:4px 10px;font-size:12px;font-weight:600}
 .verse{font-size:15px;line-height:1.7;margin:0}
 .verse strong{color:var(--cinnabar)}
@@ -361,7 +365,9 @@ function renderLuck(){
   $("bName").textContent=dog.name;
   $("bSub").textContent=(df?`${ANIMAL[df.yp.br]}띠 · 일주 ${STEM[df.dp.stem]}${BR[df.dp.br]} (${EL[stemEl(df.dp.stem)]})`:"생일 없이 보는 운세")+(dog.example?" · 예시 강아지":"");
   if(df){$("sDay").textContent=df.s;$("dDay").textContent=`${df.g.theme} · ${df.god}`}else{$("sDay").textContent="–";$("dDay").textContent="생일 필요"}
-  if(mood){$("sMood").textContent=mood.score;$("dMood").textContent=mood.state+" · 자세히"}else{$("sMood").textContent="–";$("dMood").textContent="얼굴 사진 필요"}
+  const CAM='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>';
+  if(mood){$("sMood").textContent=mood.score;$("dMood").textContent=mood.state+" · 자세히 ›";$("moodTile").classList.add("done")}
+  else{$("sMood").textContent="–";$("dMood").innerHTML=CAM+"얼굴 사진 올리기";$("moodTile").classList.remove("done")}
   const ps=[]; if(df)ps.push([df.s,40]); if(mood)ps.push([mood.score,60]);
   const tw=ps.reduce((a,b)=>a+b[1],0);
   $("total").textContent=mood&&tw?Math.round(ps.reduce((a,b)=>a+b[0]*b[1],0)/tw):"··";
