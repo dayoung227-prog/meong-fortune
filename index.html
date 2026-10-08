@@ -288,7 +288,7 @@ footer a{color:inherit}
         <ul>
           <li>2마리 이상 등록하면 '오늘의 운세'에서 <strong>오늘의 멍운 순위</strong>를 알려줘요.</li>
           <li>운세 화면 위쪽에서 강아지를 골라 한 마리씩 운세를 볼 수 있어요.</li>
-          <li>기분 점수와 기록은 강아지마다 따로 저장돼요.</li>
+          <li>최근 기분 기록은 강아지마다 따로 저장돼요.</li>
         </ul>
         <p class="tip-now" id="multiNow"></p>
       </div>
@@ -509,15 +509,12 @@ let activeId=store.get("meong.active");
 const shown=()=>dogs.length?dogs:[EXAMPLE];
 const active=()=>shown().find(d=>d.id===activeId)||shown()[0];
 const saveDogs=()=>store.set("meong.dogs",dogs)&&store.set("meong.active",activeId);
-const moodKey=id=>"meong.mood."+id, histKey=id=>"meong.hist."+id;
-function getMood(id){
-  if(id==="example")return null; // 예시 강아지는 기분을 저장하지 않음
-  const m=store.get(moodKey(id));
-  if(!m||m.date!==todayKey||typeof m.score!=="number")return null;
-  if(!Array.isArray(m.probs))m.probs=[]; if(!m.state)m.state="기분 측정"; if(!m.summary)m.summary="";
-  return m;
-}
-store.del(moodKey("example")); store.del(histKey("example")); // 예전 버전에서 예시로 저장된 기록 정리
+const histKey=id=>"meong.hist."+id;
+/* 오늘의 기분 점수는 화면을 보고 있는 동안만 기억함 (새로고침하면 사라짐). 최근 기록 그래프는 따로 저장 */
+const moods={};
+function getMood(id){return id==="example"?null:(moods[id]||null)}
+try{Object.keys(localStorage).filter(k=>k.startsWith("meong.mood.")).forEach(k=>localStorage.removeItem(k))}catch(e){} // 예전 버전에서 저장해둔 점수 정리
+store.del(histKey("example")); // 예전 버전에서 예시로 저장된 기록 정리
 function avatar(d,size){return `<span class="av ${size}" aria-hidden="true">${d&&d.photo?`<img src="${d.photo}" alt="">`:esc((d&&d.name||"?").slice(0,1))}</span>`}
 
 /* ---------- 일진운 ---------- */
@@ -621,7 +618,7 @@ let editingId=null, delArmed=false, formPhoto=null, photoAfterSave=false;
 function goRegister(fromPhoto){
   showTab("dogs"); openForm(null);
   photoAfterSave=!!fromPhoto;
-  $("fHint").textContent=fromPhoto?"기분 점수를 저장하려면 먼저 우리 강아지를 등록해주세요. 등록하면 바로 사진을 고를 수 있어요.":"";
+  $("fHint").textContent=fromPhoto?"기분 점수를 보려면 먼저 우리 강아지를 등록해주세요. 등록하면 바로 사진을 고를 수 있어요.":"";
   if(fromPhoto)$("fSave").textContent="등록하고 사진 고르기";
 }
 $("onboardBtn").onclick=()=>goRegister(false);
@@ -673,7 +670,7 @@ $("fSave").onclick=()=>{
   if(editingId){Object.assign(dogs.find(x=>x.id===editingId),data)}
   else{const id="d"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);dogs.push({id,...data});activeId=id}
   if(!saveDogs()){dogs=JSON.parse(before);activeId=beforeActive;$("fErr").textContent="저장 공간이 부족해요. 다른 강아지의 프로필 사진을 빼고 다시 시도해주세요.";return}
-  if(wasEmpty){store.del(moodKey("example"));store.del(histKey("example"))} // 예전에 예시로 저장된 기록 정리
+  if(wasEmpty)store.del(histKey("example")); // 예전에 예시로 저장된 기록 정리
   closeForm();renderDogs();
   if(isNew&&(thenPhoto||wasEmpty)){showTab("luck");if(thenPhoto)openPhoto(true)} // 첫 등록 후 운세 화면으로, 사진 버튼에서 왔으면 바로 사진 고르기
 };
@@ -681,7 +678,7 @@ $("fDelete").onclick=()=>{
   if(!editingId)return;
   if(!delArmed){delArmed=true;$("fDelete").textContent="한 번 더 누르면 삭제돼요";return}
   const id=editingId;
-  dogs=dogs.filter(x=>x.id!==id); store.del(moodKey(id)); store.del(histKey(id));
+  dogs=dogs.filter(x=>x.id!==id); delete moods[id]; store.del(histKey(id));
   if(activeId===id)activeId=dogs[0]?dogs[0].id:null;
   saveDogs();closeForm();renderDogs();
 };
@@ -690,9 +687,9 @@ $("fDelete").onclick=()=>{
 function setB(t,err){$("bStatus").textContent=t;$("bStatus").classList.toggle("err",!!err)}
 $("exportBtn").onclick=async()=>{
   if(!dogs.length){setB("아직 등록한 강아지가 없어서 백업할 내용이 없어요.",true);return}
-  const moods={},hists={};
-  dogs.forEach(d=>{const m=store.get(moodKey(d.id));if(m)moods[d.id]=m;const h=store.get(histKey(d.id));if(h)hists[d.id]=h});
-  const data={app:"meong-fortune",v:1,exported:new Date().toISOString(),active:activeId,dogs,moods,hists};
+  const hists={};
+  dogs.forEach(d=>{const h=store.get(histKey(d.id));if(h)hists[d.id]=h});
+  const data={app:"meong-fortune",v:1,exported:new Date().toISOString(),active:activeId,dogs,hists};
   const name=`meong-backup-${todayKey.replace(/-/g,"")}.json`;
   const blob=new Blob([JSON.stringify(data)],{type:"application/json"});
   const file=new File([blob],name,{type:"application/json"});
@@ -713,7 +710,6 @@ $("importFile").addEventListener("change",async e=>{
       if(!d||!d.id||!d.name)return;
       const clean={id:String(d.id),name:String(d.name).slice(0,12),bday:/^\d{4}-\d{2}-\d{2}$/.test(d.bday||"")?d.bday:"",noB:!!d.noB,photo:typeof d.photo==="string"&&d.photo.startsWith("data:image/")?d.photo:null};
       const i=dogs.findIndex(x=>x.id===clean.id); if(i>=0){dogs[i]=clean;updated++}else{dogs.push(clean);added++}
-      const m=data.moods&&data.moods[clean.id]; if(m&&typeof m.score==="number"){const cur=store.get(moodKey(clean.id));if(!cur||cur.date<=m.date)store.set(moodKey(clean.id),m)}
       const h=data.hists&&data.hists[clean.id]; if(Array.isArray(h)){const map={};(store.get(histKey(clean.id))||[]).concat(h).forEach(x=>{if(x&&x.date&&typeof x.score==="number")map[x.date]=x});store.set(histKey(clean.id),Object.values(map).sort((a,b)=>a.date<b.date?-1:1).slice(-30))}
     });
     if(data.active&&dogs.some(d=>d.id===data.active))activeId=data.active;
@@ -855,7 +851,7 @@ async function analyze(force){
     const top=probs.slice().sort((a,b)=>b.v-a.v)[0].k;
     const t=moodText(top,score,dog.id);
     const mood={date:todayKey,score,state:t.state,summary:t.summary,probs:probs.sort((a,b)=>b.v-a.v)};
-    store.set(moodKey(dog.id),mood);
+    moods[dog.id]=mood;
     const h=(store.get(histKey(dog.id))||[]).filter(x=>x.date!==todayKey); h.push({date:todayKey,score}); store.set(histKey(dog.id),h.slice(-30));
     setStatus("분석했어요. 위 부적에 반영됐어요.");
     renderLuck();
