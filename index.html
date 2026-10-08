@@ -225,7 +225,7 @@ footer a{color:inherit}
     <section class="sheet" id="formSheet" aria-labelledby="h-form" hidden>
       <h2 id="h-form">새 강아지 등록</h2>
       <div class="row">
-        <label class="f">이름<input id="fName" type="text" maxlength="12" placeholder="예: 보리"></label>
+        <label class="f">이름<input id="fName" type="text" maxlength="12" placeholder="예: 봉봉"></label>
         <label class="f">생일 (양력)<input id="fBday" type="date"></label>
       </div>
       <label class="check"><input id="fNoBday" type="checkbox"> 생일을 몰라요 (일진운 없이 볼게요)</label>
@@ -315,7 +315,7 @@ const todayP=dayPillar(TY,TM,TD);
 $("today").innerHTML=`${TY}년 ${TM}월 ${TD}일<br><b>${pName(todayP)}일</b>`;
 
 /* ---------- 강아지 데이터 ---------- */
-const EXAMPLE={id:"example",name:"보리",bday:"2021-05-17",noB:false,example:true};
+const EXAMPLE={id:"example",name:"봉봉",bday:"2021-05-17",noB:false,example:true};
 let dogs=store.get("meong.dogs"); if(!Array.isArray(dogs))dogs=[];
 let activeId=store.get("meong.active");
 const shown=()=>dogs.length?dogs:[EXAMPLE];
