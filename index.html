@@ -968,7 +968,7 @@ const standalone=matchMedia("(display-mode: standalone)").matches||navigator.sta
 const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 let deferredPrompt=null;
 function renderInstall(){
-  if(standalone){$("installText").textContent="홈 화면 앱으로 실행 중이에요. 인터넷이 없어도 한 번 열어본 화면은 그대로 볼 수 있어요.";$("installBtn").hidden=true;return}
+  if(standalone){$("installSheet").hidden=true;return} // 이미 앱으로 설치해서 연 경우엔 안내 칸을 숨김
   if(deferredPrompt){$("installBtn").hidden=false;return}
   $("installBtn").hidden=true;
   $("installText").textContent=isIOS
@@ -976,7 +976,7 @@ function renderInstall(){
     :"브라우저 메뉴(⋮)에서 '홈 화면에 추가' 또는 '앱 설치'를 누르면 앱처럼 쓸 수 있어요. 한 번 열어둔 뒤에는 인터넷이 없어도 운세를 볼 수 있어요.";
 }
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;renderInstall()});
-window.addEventListener("appinstalled",()=>{deferredPrompt=null;$("installText").textContent="홈 화면에 추가했어요!";$("installBtn").hidden=true});
+window.addEventListener("appinstalled",()=>{deferredPrompt=null;$("installText").textContent="홈 화면에 추가했어요! 다음부터는 홈 화면 아이콘으로 열어주세요.";$("installBtn").hidden=true});
 $("installBtn").onclick=async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null;renderInstall()};
 renderInstall();
 if("serviceWorker" in navigator&&location.protocol==="https:"&&/github\.io$/.test(location.hostname)){
