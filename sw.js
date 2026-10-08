@@ -1,6 +1,6 @@
 // 오늘의 멍운세 서비스워커: 한 번 열어본 뒤에는 인터넷 없이도 열리게 저장해둠
 // 앱 파일을 바꿀 때 VERSION 숫자를 올리면 옛 저장분이 정리돼요.
-const VERSION = "meong-v4";
+const VERSION = "meong-v5";
 const CORE = [
   "./",
   "./index.html",
@@ -35,7 +35,7 @@ self.addEventListener("fetch", (e) => {
   // 화면(HTML)은 항상 최신 먼저, 인터넷이 없으면 저장본
   if (req.mode === "navigate" || (url.origin === location.origin && url.pathname.endsWith(".html"))) {
     e.respondWith(
-      fetch(req)
+      fetch(req, { cache: "no-cache" }) // 브라우저 저장본(최대 10분)을 건너뛰고 서버에 최신본 확인
         .then((res) => { const copy = res.clone(); caches.open(VERSION).then((c) => c.put(req, copy)); return res; })
         .catch(() => caches.match(req).then((r) => r || caches.match("./index.html")))
     );
