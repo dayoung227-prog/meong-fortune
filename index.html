@@ -64,6 +64,7 @@ button:disabled{opacity:.5;cursor:default}
 .chip input:checked + span{background:var(--fg);color:var(--bg);border-color:var(--fg)}
 .chips .add{padding:5px 12px;border-radius:99px;font-size:13px;border-style:dashed;background:transparent;color:var(--muted)}
 .note{font-size:12px;color:var(--muted);margin:0}
+.fun-note{font-size:12px;color:var(--muted);margin:0 0 -12px;text-align:right}
 .status{font-size:13px;color:var(--muted)}
 .status.err{color:var(--bad)}
 /* talisman */
@@ -144,6 +145,7 @@ footer a{color:inherit}
   <div class="page" id="page-luck" role="tabpanel" aria-labelledby="tab-luck">
     <div class="chips" id="dogbar" aria-label="강아지 선택"></div>
 
+    <p class="fun-note">운세는 재미로 즐겨주세요</p>
     <section class="bujeok" aria-label="오늘의 운세 결과">
       <div class="b-top">
         <div>
@@ -232,7 +234,7 @@ footer a{color:inherit}
     휴대폰과 PC에 따로 저장돼서, 기기를 바꾸면 강아지를 다시 등록해야 해요.<br>
     브라우저의 사이트 데이터를 지우면 등록 정보와 기록도 같이 지워져요.<br><br>
     감정 분석 모델 학습 데이터: <a href="https://universe.roboflow.com/2642025/dog-emotion-classification" target="_blank" rel="noopener">"dog emotion classification"</a> (Roboflow Universe, 2642025), <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a><br>
-    모델 제작: Google Teachable Machine · 운세는 재미로 즐겨주세요
+    모델 제작: Google Teachable Machine
   </footer>
 </div>
 
