@@ -4,7 +4,22 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>오늘의 멍운세</title>
-<meta name="description" content="강아지 얼굴 사진으로 기분 점수를 보고, 생일로 오늘의 일진운을 보는 무료 운세 앱">
+<meta name="description" content="강아지 얼굴 사진 한 장으로 보는 오늘의 기분 점수와 일진운. 무료, 로그인 없음, 사진은 휴대폰 밖으로 나가지 않아요.">
+<!-- 카톡·인스타·문자로 링크를 보낼 때 보이는 미리보기 -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="오늘의 멍운세">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="오늘의 멍운세 · 우리 강아지 오늘 기분은 몇 점?">
+<meta property="og:description" content="강아지 얼굴 사진 한 장으로 보는 기분 점수와 일진운. 무료, 로그인 없음, 사진은 휴대폰 밖으로 나가지 않아요.">
+<meta property="og:url" content="https://dayoung227-prog.github.io/meong-fortune/">
+<meta property="og:image" content="https://dayoung227-prog.github.io/meong-fortune/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="노란 부적 바탕에 '오늘의 멍운세' 붓글씨와 빨간 발바닥 도장">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="오늘의 멍운세 · 우리 강아지 오늘 기분은 몇 점?">
+<meta name="twitter:description" content="강아지 얼굴 사진 한 장으로 보는 기분 점수와 일진운. 무료, 로그인 없음.">
+<meta name="twitter:image" content="https://dayoung227-prog.github.io/meong-fortune/og-image.png">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -42,6 +57,9 @@ header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;
 h1{font-family:var(--font-display);font-weight:400;font-size:44px;line-height:1;margin:0}
 .today{font-size:13px;color:var(--muted);text-align:right}
 .today b{color:var(--cinnabar);font-weight:600}
+.today > span{display:block}
+.visits{margin-top:4px;font-size:11px;font-variant-numeric:tabular-nums}
+.visits b{font-family:var(--font-data);font-weight:500}
 nav.tabs{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
 nav.tabs button{border:0;border-radius:0;background:transparent;padding:10px;font-weight:600;color:var(--muted)}
 nav.tabs button[aria-selected="true"]{background:var(--fg);color:var(--bg)}
@@ -186,7 +204,7 @@ footer a{color:inherit}
 <div class="wrap">
   <header>
     <h1>오늘의 멍운세</h1>
-    <div class="today" id="today"></div>
+    <div class="today"><span id="today"></span><span class="visits" id="visits" hidden></span></div>
   </header>
 
   <nav class="tabs" role="tablist" aria-label="페이지">
@@ -982,6 +1000,24 @@ renderInstall();
 if("serviceWorker" in navigator&&location.protocol==="https:"&&/github\.io$/.test(location.hostname)){
   window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 }
+
+/* ---------- 오늘의 방문자 (Supabase, 날짜별 숫자만 저장) ---------- */
+const VISIT={url:"",key:""}; // Supabase Project URL과 anon public 키를 넣으면 켜져요
+(async()=>{
+  if(!VISIT.url||!VISIT.key||!window.fetch)return;
+  const first=store.get("meong.visited")!==todayKey; // 이 기기에서 오늘 처음 열었을 때만 1 더함
+  try{
+    const res=await fetch(VISIT.url.replace(/\/$/,"")+"/rest/v1/rpc/meong_visit",{method:"POST",
+      headers:{"apikey":VISIT.key,"Authorization":"Bearer "+VISIT.key,"Content-Type":"application/json"},
+      body:JSON.stringify({p_new:first})});
+    if(!res.ok)return;
+    const v=await res.json();
+    if(first)store.set("meong.visited",todayKey);
+    const n=x=>Number(x||0).toLocaleString("ko-KR");
+    $("visits").innerHTML=`오늘 방문 <b>${n(v.today)}</b>명 · 누적 <b>${n(v.total)}</b>명`;
+    $("visits").hidden=false;
+  }catch(e){} // 연결이 안 되면 조용히 숨김
+})();
 
 showTab(location.hash==="#dogs"?"dogs":"luck");
 })();
