@@ -1,0 +1,16 @@
+{
+  "name": "오늘의 멍운세",
+  "short_name": "멍운세",
+  "description": "강아지 얼굴 사진으로 기분 점수를 보고, 생일로 오늘의 일진운을 보는 무료 운세 앱",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f3ef",
+  "theme_color": "#f3d96b",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
