@@ -1,5 +1,6 @@
 /* 오늘의 멍운세 — 4개 언어 문구 (ko 한국어 / ja 日本語 / en English / zh 中文)
-   순서가 있는 배열(십성·행운·기분 문구)은 언어마다 같은 순서로 맞춰야 해요. */
+   순서가 있는 배열(십성·행운·기분 문구)은 언어마다 같은 순서로 맞춰야 해요.
+   lines(상황 8개)·tips(조언 6개)는 십성 10개마다 하나씩 짝지어 '상황+조언' 48가지 조합을 만들어요. */
 window.MEONG_I18N = {
 
 /* ===================== 한국어 ===================== */
@@ -97,16 +98,28 @@ ko: {
   godNames: ["비견","겁재","식신","상관","편재","정재","편관","정관","편인","정인"],
   themes: ["친구운","경쟁운","먹을운","표현운","득템운","보상운","긴장운","규칙운","휴식운","사랑운"],
   lines: [
-    ["마음 맞는 친구견을 만나기 좋은 날이에요. 낯선 강아지에게도 비교적 너그러워요.","산책길 단골 친구를 만나면 꼬리가 바빠질 거예요. 인사할 시간을 넉넉히 주세요.","혼자보다 같이가 즐거운 날. 애견 카페나 놀이터에 가면 좋은 일이 생겨요.","비슷한 성격의 친구와 죽이 잘 맞는 날이에요. 함께 뛰어놀 기회를 만들어 주세요."],
-    ["장난감·간식 쟁탈전이 벌어질 수 있어요. 여러 마리라면 밥그릇 간격을 넓혀주세요.","내 것 네 것 구분이 확실해지는 날. 장난감을 두고 실랑이가 생기면 잠깐 떨어뜨려 주세요.","자존심이 세지는 날이에요. 다른 강아지와 비교하는 말보다 하나뿐인 칭찬이 좋아요.","간식 앞에서 유난히 진지해져요. 천천히 먹도록 노즈워크 그릇을 써보세요."],
-    ["식욕도 기분도 좋은 날. 노즈워크처럼 먹으면서 노는 놀이가 잘 맞아요. 과식만 주의!","밥그릇이 유난히 빨리 비는 날이에요. 맛있는 토핑 하나면 하루 종일 행복해요.","입이 즐거우면 마음도 즐거운 날. 새 간식을 소개하기 좋아요. 처음 먹는 건 조금만!","냄새 맡는 놀이가 최고의 보약이에요. 간식 숨기기 놀이로 머리도 배도 채워주세요."],
-    ["하고 싶은 말이 많은 날이에요. 짖음이나 투정이 늘 수 있으니 에너지를 충분히 풀어주세요.","자기주장이 강해지는 날. 원하는 게 있으면 앞발로 톡톡 신호를 보낼 거예요.","끼가 넘치는 날이에요. 새 개인기를 가르치면 의외로 빨리 배워요.","작은 소리에도 한마디씩 하고 싶은 날. 짖으면 혼내기보다 관심을 다른 데로 돌려주세요."],
-    ["산책길에서 뭔가 발견하는 운이에요. 단, 바닥 줍줍은 꼭 막아주세요.","뜻밖의 선물이 들어오는 날이에요. 새 장난감을 주면 반응이 최고일 거예요.","호기심이 보물을 찾는 날. 새로운 산책 코스에서 재밌는 발견이 기다려요.","평소 못 받던 간식을 얻어먹는 운이에요. 가족들에게 몰래 주지 말라고 한마디 해두세요."],
-    ["잘한 일에 칭찬과 간식이 따라오는 날. 훈련 보상이 유난히 잘 먹혀요.","꾸준히 한 만큼 돌아오는 날. 연습하던 개인기가 오늘 딱 성공할 수 있어요.","작은 칭찬에도 크게 기뻐하는 날이에요. '잘했어!'를 아끼지 말아주세요.","규칙적인 하루가 복을 불러요. 밥·산책 시간을 평소처럼 지켜주세요."],
-    ["낯선 소리나 사람에게 예민할 수 있어요. 새로운 장소보다 익숙한 코스를 추천해요.","초인종이나 택배 소리에 예민한 날. 놀라면 조용히 안심시켜 주세요.","괜히 경계심이 올라가는 날이에요. 처음 보는 사람과의 인사는 천천히 해주세요.","무리하지 않는 게 이기는 날. 산책은 짧고 편하게, 휴식은 길게 해주세요."],
-    ["루틴을 지키기 좋은 날이에요. '앉아·기다려' 같은 기본기를 복습하면 효과가 좋아요.","말을 유난히 잘 듣는 모범견의 날이에요. 칭찬을 듬뿍 해주세요.","정해진 순서대로 하루가 흘러가면 가장 행복한 날. 갑작스러운 일정 변경은 피해주세요.","예의 바른 하루예요. 다른 강아지와 차분하게 인사하는 연습을 해보기 좋아요."],
-    ["혼자 쉬고 싶은 날이에요. 낮잠은 방해하지 말아주세요.","생각이 많아지는 날. 창밖을 오래 바라봐도 그냥 두세요. 사색 중이에요.","에너지 충전의 날이에요. 푹신한 방석과 조용한 구석을 마련해 주세요.","익숙한 냄새가 위로가 되는 날. 보호자 옷이나 담요를 곁에 두면 더 편히 쉬어요."],
-    ["보호자 손길이 제일 반가운 날. 빗질이나 마사지로 스킨십을 늘려보세요.","보호자 옆에 딱 붙어 있고 싶은 날이에요. 무릎 자리를 비워두세요.","사랑받는 만큼 돌려주는 날. 눈을 마주치며 이름을 불러주면 꼬리로 대답해요.","따뜻한 손길이 최고의 선물이에요. 귀 뒤와 턱 밑을 살살 긁어주세요."]
+    ["마음 맞는 친구견을 만나기 좋은 날이에요.", "산책길 단골 친구를 만나면 꼬리가 바빠질 거예요.", "혼자보다 같이가 즐거운 날이에요.", "비슷한 성격의 친구와 죽이 잘 맞는 날이에요.", "낯선 강아지에게도 비교적 너그러운 날이에요.", "처음 보는 친구와도 금방 친해질 수 있는 날이에요.", "함께 노는 시간이 기운을 채워주는 날이에요.", "친구 냄새 맡기에 유난히 진심인 날이에요."],
+    ["장난감·간식 쟁탈전이 벌어질 수 있는 날이에요.", "내 것 네 것 구분이 확실해지는 날이에요.", "자존심이 세지는 날이에요.", "간식 앞에서 유난히 진지해지는 날이에요.", "이기고 싶은 마음이 커지는 날이에요.", "다른 강아지가 받는 관심에 질투가 날 수 있어요.", "터그 놀이에서 절대 안 지려는 날이에요.", "자기 자리를 지키려는 마음이 강해지는 날이에요."],
+    ["식욕도 기분도 좋은 날이에요.", "밥그릇이 유난히 빨리 비는 날이에요.", "입이 즐거우면 마음도 즐거운 날이에요.", "냄새 맡는 놀이가 최고의 보약인 날이에요.", "부엌 쪽으로 자꾸 코가 향하는 날이에요.", "작은 간식 하나에도 크게 행복해하는 날이에요.", "먹는 즐거움이 하루를 좌우하는 날이에요.", "맛있는 냄새를 귀신같이 알아채는 날이에요."],
+    ["하고 싶은 말이 많은 날이에요.", "자기주장이 강해지는 날이에요.", "끼가 넘치는 날이에요.", "작은 소리에도 한마디씩 하고 싶은 날이에요.", "원하는 게 있으면 앞발로 톡톡 신호를 보낼 거예요.", "표정과 몸짓이 유난히 풍부한 날이에요.", "관심받고 싶은 마음이 커지는 날이에요.", "투정이 조금 늘 수 있는 날이에요."],
+    ["산책길에서 뭔가 발견하는 운이에요.", "뜻밖의 선물이 들어오는 날이에요.", "호기심이 보물을 찾는 날이에요.", "평소 못 받던 간식을 얻어먹는 운이에요.", "새로운 것에 대한 호기심이 커지는 날이에요.", "작은 행운이 여기저기 숨어 있는 날이에요.", "코끝이 보물 탐지기가 되는 날이에요.", "생각지 못한 즐거움이 찾아오는 날이에요."],
+    ["잘한 일에 칭찬과 간식이 따라오는 날이에요.", "꾸준히 한 만큼 돌아오는 날이에요.", "작은 칭찬에도 크게 기뻐하는 날이에요.", "규칙적인 하루가 복을 부르는 날이에요.", "노력한 만큼 칭찬받는 날이에요.", "연습하던 개인기가 딱 성공할 수 있는 날이에요.", "착한 행동이 눈에 띄는 날이에요.", "차곡차곡 쌓인 좋은 습관이 빛나는 날이에요."],
+    ["낯선 소리나 사람에게 예민할 수 있는 날이에요.", "초인종이나 택배 소리에 예민한 날이에요.", "괜히 경계심이 올라가는 날이에요.", "무리하지 않는 게 이기는 날이에요.", "작은 변화에도 깜짝 놀랄 수 있는 날이에요.", "보호자 곁을 떠나지 않으려 할 수 있어요.", "컨디션이 살짝 예민해질 수 있는 날이에요.", "조심성이 많아지는 날이에요."],
+    ["루틴을 지키기 좋은 날이에요.", "말을 유난히 잘 듣는 모범견의 날이에요.", "정해진 순서대로 하루가 흘러가면 가장 행복한 날이에요.", "예의 바른 하루예요.", "집중력이 좋아지는 날이에요.", "보호자 말에 귀를 쫑긋 세우는 날이에요.", "차분하고 의젓한 모습을 보여주는 날이에요.", "질서가 마음을 편하게 해주는 날이에요."],
+    ["혼자 쉬고 싶은 날이에요.", "생각이 많아지는 날이에요.", "에너지 충전의 날이에요.", "익숙한 냄새가 위로가 되는 날이에요.", "느긋하게 늘어지고 싶은 날이에요.", "창밖을 오래 바라보며 사색하는 날이에요.", "잠이 평소보다 많아질 수 있는 날이에요.", "조용한 시간이 보약인 날이에요."],
+    ["보호자 손길이 제일 반가운 날이에요.", "보호자 옆에 딱 붙어 있고 싶은 날이에요.", "사랑받는 만큼 돌려주는 날이에요.", "따뜻한 손길이 최고의 선물인 날이에요.", "애교가 넘치는 날이에요.", "보호자 발소리만 들려도 꼬리가 흔들리는 날이에요.", "마음이 말랑말랑해지는 날이에요.", "함께 있는 것만으로 행복한 날이에요."]
+  ],
+  tips: [
+    ["인사할 시간을 넉넉히 주세요.", "애견 카페나 놀이터에 가보면 좋은 일이 생겨요.", "함께 뛰어놀 기회를 만들어 주세요.", "산책 코스를 친구가 자주 오는 길로 잡아보세요.", "친구를 만나면 리드줄을 살짝 느슨하게 잡아주세요.", "놀고 난 뒤에는 물을 충분히 챙겨주세요."],
+    ["여러 마리라면 밥그릇 간격을 넓혀주세요.", "장난감을 두고 실랑이가 생기면 잠깐 떨어뜨려 주세요.", "다른 강아지와 비교하기보다 하나뿐인 칭찬을 해주세요.", "천천히 먹도록 노즈워크 그릇을 써보세요.", "간식은 한 마리씩 이름을 부르며 차례로 주세요.", "놀이가 과열되면 잠깐 쉬는 시간을 넣어주세요."],
+    ["노즈워크처럼 먹으면서 노는 놀이를 해보세요.", "맛있는 토핑 하나 올려주면 하루 종일 행복해요.", "새 간식을 소개하기 좋아요. 처음 먹는 건 조금만 주세요.", "간식 숨기기 놀이로 머리도 배도 채워주세요.", "과식하지 않도록 양은 꼭 평소대로 지켜주세요.", "사람 음식을 몰래 주지 않도록 가족들에게 말해두세요."],
+    ["에너지를 충분히 풀어주세요.", "새 개인기를 가르치면 의외로 빨리 배워요.", "짖으면 혼내기보다 관심을 다른 데로 돌려주세요.", "보내는 신호에 눈을 맞추고 대답해 주세요.", "오늘 사진을 찍으면 표정이 잘 나와요.", "조용할 때 칭찬해 주면 차분함을 배워요."],
+    ["바닥 줍줍은 꼭 막아주세요.", "새 장난감을 주면 반응이 최고일 거예요.", "새로운 산책 코스를 걸어보세요.", "가족들에게 간식을 몰래 주지 말라고 한마디 해두세요.", "집 안에 간식을 숨겨 보물찾기를 해보세요.", "산책할 때 냄새 맡을 시간을 넉넉히 주세요."],
+    ["훈련 보상이 유난히 잘 먹히니 연습해 보세요.", "'잘했어!'를 아끼지 말아주세요.", "밥·산책 시간을 평소처럼 지켜주세요.", "잘한 순간 바로 칭찬해 주세요.", "작은 간식을 잘게 나눠 보상으로 써보세요.", "오늘 배운 걸 짧게 한 번 더 복습해 주세요."],
+    ["새로운 장소보다 익숙한 코스를 추천해요.", "놀라면 조용히 안심시켜 주세요.", "처음 보는 사람과의 인사는 천천히 해주세요.", "산책은 짧고 편하게, 휴식은 길게 해주세요.", "숨을 수 있는 조용한 자리를 마련해 주세요.", "큰 소리 대신 낮고 차분한 목소리로 말해 주세요."],
+    ["'앉아·기다려' 같은 기본기를 복습해 보세요.", "칭찬을 듬뿍 해주세요.", "갑작스러운 일정 변경은 피해주세요.", "다른 강아지와 차분하게 인사하는 연습을 해보세요.", "짧게 여러 번 나눠서 훈련해 보세요.", "밥과 산책 시간을 평소와 똑같이 맞춰주세요."],
+    ["낮잠은 방해하지 말아주세요.", "멍하니 있어도 그냥 두세요. 사색 중이에요.", "푹신한 방석과 조용한 구석을 마련해 주세요.", "보호자 옷이나 담요를 곁에 두면 더 편히 쉬어요.", "산책은 천천히, 냄새 맡으며 걷는 정도가 좋아요.", "집 안을 조용하게 해주세요."],
+    ["빗질이나 마사지로 스킨십을 늘려보세요.", "무릎 자리를 비워두세요.", "눈을 마주치며 이름을 불러주면 꼬리로 대답해요.", "귀 뒤와 턱 밑을 살살 긁어주세요.", "외출 전후로 꼭 안아주세요.", "오늘은 조금 더 일찍 집에 와주세요."]
   ],
   colors: [["초록","연두","민트","올리브","청록"],["빨강","주황","다홍","핑크","보라"],["노랑","베이지","갈색","머스터드","살구"],["흰색","은색","회색","아이보리","금색"],["파랑","남색","검정","하늘색","청록빛 파랑"]],
   items: [
@@ -224,16 +237,28 @@ ja: {
   godNames: ["比肩","劫財","食神","傷官","偏財","正財","偏官","正官","偏印","印綬"],
   themes: ["友達運","競争運","ごはん運","表現運","掘り出し運","ごほうび運","緊張運","ルール運","休息運","愛情運"],
   lines: [
-    ["気の合う犬友達に会うのにぴったりの日。知らない子にもわりと寛大です。","散歩道でいつもの友達に会えたら、しっぽが大忙し。あいさつの時間をたっぷりあげてください。","ひとりよりみんなが楽しい日。ドッグカフェやドッグランに行くといいことがあります。","似た性格の友達と息がぴったりの日。いっしょに走り回る機会を作ってあげてください。"],
-    ["おもちゃやおやつの取り合いが起きるかも。多頭飼いならごはん皿の間隔を広げてください。","自分のもの・相手のものの区別がはっきりする日。おもちゃでもめたら少し離してあげてください。","プライドが高くなる日。ほかの子と比べるより、その子だけへのほめ言葉が効きます。","おやつの前でいつになく真剣に。ゆっくり食べられるようノーズワーク皿を使ってみて。"],
-    ["食欲も気分も上々の日。ノーズワークのような食べながら遊ぶ遊びがぴったり。食べすぎだけ注意！","ごはん皿がいつもより早く空っぽに。おいしいトッピングひとつで一日中ごきげんです。","口が楽しいと心も楽しい日。新しいおやつを試すのにいい日です。初めてのものは少しだけ！","においをかぐ遊びが最高の栄養。おやつ探しゲームで頭もおなかも満たしてあげて。"],
-    ["言いたいことがたくさんある日。吠えたりすねたりが増えるかも。エネルギーを十分発散させてあげて。","自己主張が強くなる日。ほしいものがあると前足でトントン合図してきます。","才能があふれる日。新しい芸を教えると意外とすぐ覚えます。","小さな音にもひとこと言いたい日。吠えたら叱るより、気をそらしてあげてください。"],
-    ["散歩道で何か見つける運。ただし拾い食いは必ず止めてください。","思いがけないプレゼントが届く日。新しいおもちゃをあげると反応は最高です。","好奇心がお宝を見つける日。新しい散歩コースで面白い発見が待っています。","いつもはもらえないおやつにありつける運。家族にこっそりあげないよう言っておいてください。"],
-    ["いいことをするとほめ言葉とおやつがついてくる日。トレーニングのごほうびがよく効きます。","コツコツやった分だけ返ってくる日。練習していた芸が今日成功するかも。","小さなほめ言葉でも大喜びの日。「えらいね！」を惜しまないでください。","規則正しい一日が福を呼びます。ごはん・散歩の時間はいつも通りに。"],
-    ["知らない音や人に敏感になるかも。新しい場所より慣れたコースがおすすめです。","チャイムや宅配の音に敏感な日。驚いたら静かに安心させてあげてください。","なんとなく警戒心が高まる日。初対面の人とのあいさつはゆっくりと。","無理をしないのが勝ちの日。散歩は短く楽に、休みは長めに。"],
-    ["ルーティンを守るのにいい日。「おすわり・まて」などの基本をおさらいすると効果的です。","いつになく言うことをよく聞く優等生の日。たっぷりほめてあげてください。","決まった順番で一日が流れると一番幸せな日。急な予定変更は避けてください。","礼儀正しい一日。ほかの子と落ち着いてあいさつする練習にぴったりです。"],
-    ["ひとりで休みたい日。お昼寝はじゃましないであげてください。","考えごとが多い日。窓の外をずっと眺めていてもそっとしておいて。思索中です。","エネルギー充電の日。ふかふかのクッションと静かな場所を用意してあげてください。","なじみのにおいが癒しになる日。飼い主さんの服やブランケットをそばに置くと、もっとくつろげます。"],
-    ["飼い主さんの手がいちばんうれしい日。ブラッシングやマッサージでスキンシップを増やしてみて。","飼い主さんのそばにぴったりくっついていたい日。ひざの上を空けておいてください。","愛された分だけ返してくれる日。目を合わせて名前を呼ぶと、しっぽで返事をします。","あたたかい手が最高の贈り物。耳の後ろとあごの下をやさしくかいてあげてください。"]
+    ["気の合う犬友達に会うのにぴったりの日。", "散歩道でいつもの友達に会えたら、しっぽが大忙し。", "ひとりよりみんなが楽しい日。", "似た性格の友達と息がぴったりの日。", "知らない子にもわりと寛大な日。", "初めての子ともすぐ仲良くなれる日。", "いっしょに遊ぶ時間が元気をくれる日。", "友達のにおいチェックにいつになく本気な日。"],
+    ["おもちゃやおやつの取り合いが起きるかも。", "自分のもの・相手のものの区別がはっきりする日。", "プライドが高くなる日。", "おやつの前でいつになく真剣になる日。", "勝ちたい気持ちが強くなる日。", "ほかの子が注目されるとやきもちを焼くかも。", "引っ張りっこでは絶対に負けたくない日。", "自分の場所を守りたい気持ちが強くなる日。"],
+    ["食欲も気分も上々の日。", "ごはん皿がいつになく早く空っぽになる日。", "口が楽しいと心も楽しい日。", "においを嗅ぐ遊びが一番の栄養になる日。", "ついキッチンのほうに鼻が向いてしまう日。", "小さなおやつひとつで大喜びする日。", "食べる楽しみが一日を左右する日。", "おいしいにおいをすぐに嗅ぎつける日。"],
+    ["言いたいことがたくさんある日。", "自己主張が強くなる日。", "個性があふれる日。", "小さな物音にもひと言いいたくなる日。", "ほしいものがあると前足でトントン合図してきます。", "表情としぐさがいつになく豊かな日。", "かまってほしい気持ちが大きくなる日。", "ちょっぴりわがままが増えるかも。"],
+    ["散歩道で何かを見つける運。", "思いがけないプレゼントが届く日。", "好奇心が宝物を見つける日。", "いつもはもらえないおやつにありつける運。", "新しいものへの好奇心が高まる日。", "小さなラッキーがあちこちに隠れている日。", "鼻先が宝探し探知機になる日。", "思いがけない楽しみがやってくる日。"],
+    ["いいことをするとほめ言葉とおやつがついてくる日。", "続けてきた分だけ返ってくる日。", "小さなほめ言葉にも大喜びする日。", "規則正しい一日が福を呼ぶ日。", "がんばった分だけほめてもらえる日。", "練習してきた芸がばっちり決まるかもしれない日。", "いい行動が目立つ日。", "コツコツ積み上げたいい習慣が光る日。"],
+    ["知らない音や人に敏感になりやすい日。", "インターホンや宅配の音に敏感な日。", "なんとなく警戒心が高まる日。", "無理をしないのが勝ちの日。", "小さな変化にもびっくりしやすい日。", "飼い主さんのそばを離れたがらないかも。", "体調が少しデリケートになりやすい日。", "慎重さが増す日。"],
+    ["ルーティンを守るのにいい日。", "いつになく言うことをよく聞く模範犬の日。", "決まった順番で一日が流れると一番幸せな日。", "お行儀のいい一日。", "集中力が上がる日。", "飼い主さんの言葉に耳をぴんと立てる日。", "落ち着いた頼もしい姿を見せてくれる日。", "決まりごとが心を落ち着かせてくれる日。"],
+    ["ひとりでゆっくりしたい日。", "考えごとが多くなる日。", "エネルギー充電の日。", "なじみのにおいが癒しになる日。", "のんびりだらりとしたい日。", "窓の外をじっと眺めて物思いにふける日。", "いつもより眠る時間が増えるかも。", "静かな時間が何よりの薬になる日。"],
+    ["飼い主さんの手が一番うれしい日。", "飼い主さんにぴったりくっついていたい日。", "愛された分だけ返してくれる日。", "あたたかい手が最高のプレゼントの日。", "甘えんぼうが止まらない日。", "飼い主さんの足音だけでしっぽが揺れる日。", "心がふんわりやわらかくなる日。", "いっしょにいるだけで幸せな日。"]
+  ],
+  tips: [
+    ["あいさつの時間をたっぷりあげてください。", "ドッグカフェやドッグランに行くといいことがあります。", "いっしょに走り回る機会を作ってあげてください。", "友達がよく来る道を散歩コースにしてみて。", "友達に会ったらリードを少しゆるめてあげてください。", "遊んだあとはお水をたっぷり用意してください。"],
+    ["多頭飼いならごはん皿の間隔を広げてください。", "おもちゃでもめたら少し離してあげてください。", "ほかの子と比べるより、その子だけへのほめ言葉を。", "ゆっくり食べられるようノーズワーク皿を使ってみて。", "おやつは一頭ずつ名前を呼んで順番にあげてください。", "遊びが白熱したら少し休憩をはさんでください。"],
+    ["ノーズワークのように食べながら遊ぶ遊びをしてみて。", "おいしいトッピングをひとつのせると一日中ごきげんです。", "新しいおやつを試すならほんの少しから。", "おやつ探しゲームで頭もおなかも満たしてあげて。", "食べすぎないよう量はいつも通りに守ってください。", "人の食べ物をこっそりあげないよう家族に伝えておいて。"],
+    ["エネルギーをたっぷり発散させてあげてください。", "新しい芸を教えると意外と早く覚えます。", "吠えたら叱るより、気をそらしてあげてください。", "送ってくる合図に目を合わせて応えてあげて。", "今日は写真を撮ると表情がよく写ります。", "静かにしているときにほめると、落ち着きを覚えます。"],
+    ["拾い食いだけはしっかり防いでください。", "新しいおもちゃをあげると反応はばっちり。", "新しい散歩コースを歩いてみて。", "家族にこっそりおやつをあげないよう、ひと言伝えておいて。", "家の中におやつを隠して宝探しをしてみて。", "散歩中はにおいを嗅ぐ時間をたっぷりあげてください。"],
+    ["トレーニングのごほうびがよく効くので練習してみて。", "「いい子!」を惜しまないでください。", "ごはん・散歩の時間はいつも通りに。", "できた瞬間にすぐほめてあげてください。", "小さなおやつを細かく分けてごほうびにしてみて。", "今日覚えたことを短くもう一度おさらいしてあげて。"],
+    ["新しい場所よりいつものコースがおすすめ。", "驚いたら静かに安心させてあげてください。", "初対面の人とのあいさつはゆっくりと。", "散歩は短く楽に、休憩は長めに。", "隠れられる静かな場所を用意してあげてください。", "大きな声を出さず、低く落ち着いた声で話しかけてあげて。"],
+    ["「おすわり・まて」などの基本をおさらいしてみて。", "たっぷりほめてあげてください。", "急な予定変更は避けてください。", "ほかの子と落ち着いてあいさつする練習をしてみて。", "短く何回かに分けてトレーニングしてみて。", "ごはんと散歩の時間をいつもと同じにそろえてあげて。"],
+    ["お昼寝はじゃましないであげてください。", "ぼんやりしていてもそっとしておいて。考えごと中です。", "ふかふかのクッションと静かなすみっこを用意してあげて。", "飼い主さんの服や毛布をそばに置くと、もっとくつろげます。", "散歩はゆっくり、においを嗅ぎながら歩く程度で。", "家の中を静かにしてあげてください。"],
+    ["ブラッシングやマッサージでスキンシップを増やしてみて。", "ひざの上を空けておいてください。", "目を見て名前を呼ぶと、しっぽでお返事します。", "耳の後ろとあごの下をやさしくかいてあげて。", "出かける前と帰ったあとはぎゅっと抱きしめて。", "今日はいつもより少し早く帰ってあげてください。"]
   ],
   colors: [["グリーン","黄緑","ミント","オリーブ","青緑"],["レッド","オレンジ","朱色","ピンク","パープル"],["イエロー","ベージュ","ブラウン","マスタード","アプリコット"],["ホワイト","シルバー","グレー","アイボリー","ゴールド"],["ブルー","紺色","ブラック","水色","ターコイズブルー"]],
   items: [
@@ -350,16 +375,28 @@ en: {
   godNames: ["Companion","Rob Wealth","Eating God","Hurting Officer","Indirect Wealth","Direct Wealth","Seven Killings","Direct Officer","Indirect Resource","Direct Resource"],
   themes: ["Friendship luck","Rivalry luck","Food luck","Expression luck","Lucky-find luck","Reward luck","Caution day","Routine luck","Rest day","Love luck"],
   lines: [
-    ["A great day to meet a dog friend you click with. Even strangers get a warmer welcome.","If your walk brings a familiar friend, that tail will be busy. Give them plenty of time to say hi.","Better together than alone today. A dog café or dog park could bring something good.","They'll get along perfectly with a like-minded friend. Make time for a good run together."],
-    ["Toy and treat tug-of-wars may break out. With several dogs, space the food bowls apart.","\"Mine\" vs \"yours\" gets very clear today. If a toy dispute starts, separate them for a bit.","Pride runs high today. Praise just for them works better than comparing to other dogs.","Unusually serious in front of treats. Try a slow-feeder or nose-work bowl."],
-    ["Big appetite, big mood. Eat-and-play games like nose work fit perfectly. Just don't overfeed!","The bowl empties extra fast today. One tasty topping keeps them happy all day.","A happy mouth makes a happy heart. A good day to try a new treat — just a little at first!","Sniffing games are the best medicine. Hide treats to feed both the brain and the belly."],
-    ["Lots to say today. Barking or whining may increase, so help them burn off energy.","Feeling assertive. Expect a paw tap when they want something.","Full of talent today. A new trick may be learned surprisingly fast.","Wants to comment on every little sound. Redirect their attention instead of scolding."],
-    ["A day for finding things on walks — but please stop any snacking off the ground.","An unexpected gift is coming. A new toy will get the best reaction.","Curiosity finds treasure today. A new walking route holds fun discoveries.","Lucky for bonus treats. Remind the family not to sneak them extras."],
-    ["Good behavior earns praise and treats today. Training rewards work especially well.","Effort pays off. That trick you've been practicing might finally click today.","Even small praise brings big joy today. Don't hold back the \"Good job!\"","A regular routine brings good luck. Keep meals and walks on schedule."],
-    ["May be sensitive to unfamiliar sounds or people. Stick to familiar routes over new places.","Doorbells and deliveries may startle. If they jump, calmly reassure them.","Extra watchful today. Take introductions with new people slowly.","Taking it easy wins today. Short, comfy walks and long rests."],
-    ["A good day to keep routines. Reviewing basics like sit and stay works well.","A model-student day — unusually good at listening. Shower them with praise.","Happiest when the day follows its usual order. Avoid sudden schedule changes.","A polite day. Great for practicing calm greetings with other dogs."],
-    ["Wants some alone time. Please don't disturb the nap.","A thoughtful day. If they stare out the window for ages, let them be — they're pondering.","A recharge day. Set up a soft cushion in a quiet corner.","Familiar smells are comforting today. Leave your clothes or a blanket nearby for better rest."],
-    ["Your touch is the best thing today. Try extra brushing or a gentle massage.","Wants to stick right by your side. Keep your lap free.","Gives back all the love they get. Say their name with eye contact and watch the tail answer.","A warm hand is the best gift. Give gentle scratches behind the ears and under the chin."]
+    ["A great day to meet a dog friend they click with.", "If the walk brings a familiar friend, that tail will be busy.", "Better together than alone today.", "They'll get along perfectly with a like-minded friend.", "Even strangers get a warmer welcome today.", "New friendships come easily today.", "Playtime with others recharges them today.", "Sniffing out friends is serious business today."],
+    ["Toy and treat tug-of-wars may break out.", "\"Mine\" vs \"yours\" gets very clear today.", "Pride runs high today.", "Unusually serious in front of treats today.", "The urge to win is strong today.", "They may get jealous when another dog gets attention.", "No way they're losing at tug today.", "They'll guard their favorite spot extra hard today."],
+    ["Big appetite, great mood today.", "The food bowl empties extra fast today.", "A happy mouth makes a happy heart today.", "Sniffing games are the best tonic today.", "That nose keeps pointing toward the kitchen today.", "Even a tiny treat brings big joy today.", "Food decides the mood today.", "They can sniff out anything tasty today."],
+    ["Lots to say today.", "Feeling assertive today.", "Full of personality today.", "Every little sound gets a comment today.", "Want something? Expect a tap-tap of the paw.", "Extra expressive faces and gestures today.", "Craving attention today.", "A little extra whining is possible today."],
+    ["Lucky finds may turn up on the walk.", "An unexpected gift may arrive today.", "Curiosity uncovers treasure today.", "They might score a rare treat today.", "Curiosity about new things runs high today.", "Little bits of luck are hiding everywhere today.", "That nose is a treasure detector today.", "A surprise bit of fun is on its way today."],
+    ["Good behavior earns praise and treats today.", "Steady effort pays off today.", "Even small praise brings big joy today.", "A regular routine brings good luck today.", "Effort gets noticed today.", "That trick they've been practicing may finally land.", "Good behavior stands out today.", "Good habits built up over time shine today."],
+    ["They may be sensitive to strange sounds or people.", "Doorbells and deliveries may set them off today.", "On guard for no clear reason today.", "Taking it easy wins today.", "Small changes may startle them today.", "They may not want to leave your side today.", "A slightly delicate day for their condition.", "Extra cautious today."],
+    ["A good day to stick to routines.", "A model-pup day — extra good at listening.", "Happiest when the day flows in its usual order.", "A well-mannered day.", "Focus is sharp today.", "Ears perk up at every word you say today.", "Calm, grown-up behavior today.", "Order brings comfort today."],
+    ["Wants some alone time today.", "A thoughtful day.", "An energy-recharge day.", "Familiar scents are comforting today.", "Feeling lazy and stretched out today.", "A day for gazing out the window, lost in thought.", "They may sleep more than usual today.", "Quiet time is the best medicine today."],
+    ["Your touch is the most welcome thing today.", "Wants to stick right by your side today.", "They'll return all the love they get today.", "A warm hand is the best gift today.", "Extra cuddly today.", "Just your footsteps set the tail wagging today.", "A soft-hearted day.", "Just being together is happiness today."]
+  ],
+  tips: [
+    ["Give them plenty of time to say hi.", "A dog café or dog park could bring something good.", "Make time for a good run together.", "Try a walking route where their friends often go.", "Keep the leash a little loose when friends meet.", "Have plenty of water ready after play."],
+    ["With several dogs, space the food bowls apart.", "If a toy dispute starts, separate them for a bit.", "Praise just for them works better than comparing.", "Try a slow-feeder or nose-work bowl.", "Hand out treats one dog at a time, calling each by name.", "If play gets heated, add a short break."],
+    ["Try play-while-you-eat games like nose work.", "One tasty topping will keep them happy all day.", "A good day for a new treat — start with just a little.", "A hide-the-treat game fills both brain and belly.", "Stick to the usual portion so they don't overeat.", "Remind the family not to sneak them people food."],
+    ["Help them burn off plenty of energy.", "New tricks may be learned surprisingly fast.", "If they bark, redirect rather than scold.", "Meet their signals with eye contact and an answer.", "Photos will capture great expressions today.", "Praise quiet moments to teach calm."],
+    ["Just don't let them eat things off the ground.", "A new toy will get an amazing reaction.", "Try a new walking route.", "Remind the family not to slip them secret snacks.", "Hide treats around the house for a treasure hunt.", "Give them plenty of sniffing time on walks."],
+    ["Training rewards work extra well — go practice.", "Don't hold back on \"Good job!\"", "Keep meals and walks on their usual schedule.", "Praise the moment they get it right.", "Break small treats into tiny pieces for rewards.", "Give today's lesson one more quick review."],
+    ["Stick to familiar routes rather than new places.", "If startled, calm them quietly.", "Take introductions to new people slowly.", "Keep walks short and easy, and rest long.", "Set up a quiet spot where they can hide.", "Speak in a low, calm voice instead of a loud one."],
+    ["Review basics like \"sit\" and \"stay.\"", "Shower them with praise.", "Avoid sudden schedule changes.", "Practice calm greetings with other dogs.", "Train in several short sessions.", "Keep meal and walk times exactly as usual."],
+    ["Please don't disturb their naps.", "If they zone out, let them — they're thinking.", "Set up a soft cushion in a quiet corner.", "Your clothes or a blanket nearby helps them relax.", "Keep walks slow, with time to sniff.", "Keep the house quiet for them."],
+    ["Add more touch with brushing or a massage.", "Keep your lap free.", "Make eye contact and say their name — the tail will answer.", "Gently scratch behind the ears and under the chin.", "Give a big hug before you leave and when you return.", "Try to come home a little earlier today."]
   ],
   colors: [["Green","Lime","Mint","Olive","Teal"],["Red","Orange","Vermilion","Pink","Purple"],["Yellow","Beige","Brown","Mustard","Apricot"],["White","Silver","Gray","Ivory","Gold"],["Blue","Navy","Black","Sky blue","Turquoise"]],
   items: [
@@ -476,16 +513,28 @@ zh: {
   godNames: ["比肩","劫财","食神","伤官","偏财","正财","七杀","正官","偏印","正印"],
   themes: ["友情运","竞争运","吃货运","表达运","捡宝运","奖励运","紧张运","规矩运","休息运","爱情运"],
   lines: [
-    ["适合遇见投缘狗朋友的一天，对陌生狗狗也比较宽容。","散步时遇到老朋友，尾巴会摇个不停。多给它们打招呼的时间吧。","一起比独处更开心的一天。去狗狗咖啡厅或遛狗场会有好事发生。","和性格相似的朋友特别合拍，给它们创造一起奔跑的机会吧。"],
-    ["可能会抢玩具、抢零食。多只狗狗的家庭请把饭碗隔开一点。","你的我的分得特别清楚。如果为玩具起争执，先把它们分开一会儿。","自尊心变强的一天。比起和别的狗狗比较，专属于它的夸奖更有效。","在零食面前格外认真。试试慢食碗或嗅闻碗吧。"],
-    ["胃口好心情也好。嗅闻这类边吃边玩的游戏最合适，只是别吃太多！","饭碗空得特别快。一点美味配料就能开心一整天。","嘴巴开心心情就开心。适合尝试新零食，第一次吃的少给一点！","嗅闻游戏是最好的补品。用藏零食游戏同时喂饱脑袋和肚子。"],
-    ["有很多话想说的一天。叫声和撒娇可能变多，让它充分释放精力吧。","主见变强的一天。想要什么时会用前爪轻轻拍你。","才艺满满的一天。教新技能的话会意外学得很快。","连小声音都想回应。叫的时候比起责骂，不如转移它的注意力。"],
-    ["散步时会有发现的运气。不过一定要阻止它乱捡地上的东西。","会收到意外礼物的一天。给新玩具的话反应会超好。","好奇心找到宝藏的一天。新的散步路线有有趣的发现在等着。","有机会吃到平时吃不到的零食。提醒家人别偷偷喂它。"],
-    ["做得好就有夸奖和零食的一天。训练奖励特别有效。","坚持就有回报的一天。一直在练的技能今天可能就成功了。","一点小夸奖都会很开心。别吝啬说“真棒！”","规律的一天会带来福气。吃饭和散步时间照常就好。"],
-    ["可能对陌生声音或人比较敏感。比起新地方，更推荐熟悉的路线。","门铃和快递声会让它敏感。受惊时请安静地安抚它。","警戒心莫名升高的一天。和陌生人打招呼请慢慢来。","不勉强就是赢的一天。散步短而轻松，休息久一点。"],
-    ["适合坚持日常作息的一天。复习“坐下、等待”等基本功效果很好。","特别听话的模范狗狗日。请多多夸奖它。","按固定顺序度过一天时最幸福。尽量避免突然变更行程。","彬彬有礼的一天。很适合练习和其他狗狗安静地打招呼。"],
-    ["想独自休息的一天。午睡时请不要打扰它。","心事有点多的一天。一直望着窗外也随它去吧，它在思考。","充电的一天。准备一个软垫和安静的角落吧。","熟悉的气味能带来安慰。把主人的衣服或毯子放在旁边，它会休息得更好。"],
-    ["最欢迎主人抚摸的一天。用梳毛或按摩多一些肌肤接触吧。","想紧紧黏在主人身边的一天。把膝盖的位置留给它吧。","被爱多少就回报多少的一天。看着它的眼睛叫名字，它会用尾巴回答你。","温暖的手是最好的礼物。轻轻挠挠它的耳后和下巴吧。"]
+    ["适合遇见投缘狗朋友的一天。", "散步时遇到老朋友，尾巴会摇个不停。", "一起比独处更开心的一天。", "和性格相似的朋友特别合拍。", "对陌生狗狗也比较宽容的一天。", "和第一次见面的朋友也能很快玩到一起。", "一起玩耍的时间能给它充电。", "闻朋友的味道格外认真的一天。"],
+    ["可能会抢玩具、抢零食。", "你的我的分得特别清楚。", "自尊心变强的一天。", "在零食面前格外认真。", "想赢的心特别强烈。", "看到别的狗狗被关注可能会吃醋。", "拔河游戏绝对不想输的一天。", "特别想守住自己位置的一天。"],
+    ["食欲和心情都很好的一天。", "饭碗空得特别快的一天。", "嘴巴开心，心情也开心。", "嗅闻游戏是最好的补品。", "鼻子总是朝厨房方向转。", "一小块零食也能让它超级开心。", "吃的乐趣决定一整天的心情。", "对美味的气味特别敏锐。"],
+    ["想说的话特别多的一天。", "主见变强的一天。", "个性十足的一天。", "一点小动静都想叫两声。", "想要什么时会用前爪轻轻拍你。", "表情和动作格外丰富的一天。", "特别想被关注的一天。", "可能会多撒点娇、闹点小脾气。"],
+    ["散步时会有新发现的运气。", "会收到意外礼物的一天。", "好奇心会找到宝贝的一天。", "能吃到平时吃不到的零食。", "对新事物特别好奇的一天。", "小小的幸运藏在各个角落。", "鼻子变成寻宝探测器的一天。", "意想不到的乐趣正在到来。"],
+    ["做得好就有夸奖和零食的一天。", "坚持多少就回报多少的一天。", "一句小小的夸奖也能让它特别开心。", "规律的一天会带来好运。", "努力会被看见的一天。", "一直在练的把戏今天可能成功。", "好行为特别显眼的一天。", "一点点积累的好习惯闪闪发光。"],
+    ["对陌生的声音或人可能比较敏感。", "对门铃和快递声特别敏感的一天。", "莫名提高警惕的一天。", "不勉强就是赢的一天。", "一点小变化也可能吓到它。", "可能会一直黏在主人身边。", "身体状态可能有点敏感。", "格外谨慎的一天。"],
+    ["适合遵守日常规律的一天。", "特别听话的模范狗狗日。", "按固定顺序过一天时最幸福。", "彬彬有礼的一天。", "注意力特别集中的一天。", "对主人的话竖起耳朵的一天。", "表现得沉稳懂事的一天。", "规律让它安心的一天。"],
+    ["想一个人休息的一天。", "心事变多的一天。", "充电的一天。", "熟悉的气味能带来安慰。", "想懒洋洋躺着的一天。", "久久望着窗外沉思的一天。", "可能比平时睡得更多。", "安静的时光就是良药。"],
+    ["最喜欢主人抚摸的一天。", "想紧紧贴在主人身边的一天。", "被爱多少就回报多少的一天。", "温暖的抚摸是最好的礼物。", "撒娇停不下来的一天。", "听到主人的脚步声尾巴就摇起来。", "心变得软软的一天。", "在一起就很幸福的一天。"]
+  ],
+  tips: [
+    ["多给它们打招呼的时间吧。", "去狗狗咖啡厅或遛狗场会有好事发生。", "给它们创造一起奔跑的机会吧。", "散步路线可以选朋友常去的那条。", "遇到朋友时把牵引绳稍微放松一点。", "玩完之后记得准备充足的水。"],
+    ["多只狗狗的家庭请把饭碗隔开一点。", "如果为玩具起争执，先把它们分开一会儿。", "比起和别的狗狗比较，专属于它的夸奖更有效。", "试试慢食碗或嗅闻碗吧。", "零食请叫着名字一只一只轮流给。", "玩得太激烈时，插入一段休息时间吧。"],
+    ["试试嗅闻垫这类边吃边玩的游戏吧。", "加一点好吃的配料，它会开心一整天。", "适合尝试新零食，第一次吃只给一点点。", "用藏零食游戏让它动脑又填饱肚子。", "请照常控制分量，别让它吃太多。", "提醒家人不要偷偷喂人类的食物。"],
+    ["让它充分释放精力吧。", "教新把戏会学得意外地快。", "它叫的时候，比起责备，不如转移注意力。", "看着它的眼睛回应它的信号吧。", "今天拍照表情会特别好。", "安静的时候夸夸它，它会学会冷静。"],
+    ["一定要防止它乱捡地上的东西。", "给它新玩具，反应会超棒。", "试试走一条新的散步路线吧。", "提醒家人别偷偷给零食。", "在家里藏点零食玩寻宝游戏吧。", "散步时多给它闻味道的时间。"],
+    ["训练奖励特别管用，来练练吧。", "别吝啬说“真棒！”。", "吃饭和散步时间照常就好。", "做对的那一刻马上夸它。", "把小零食掰成小块当奖励吧。", "把今天学的东西再简短复习一遍。"],
+    ["比起新地方，更推荐熟悉的路线。", "受到惊吓时，安静地安抚它。", "和陌生人打招呼要慢慢来。", "散步短一点、轻松一点，休息长一点。", "为它准备一个可以躲起来的安静角落。", "别大声说话，用低沉温和的声音和它说话。"],
+    ["复习一下“坐下、等待”等基本指令吧。", "多多夸奖它吧。", "请避免突然改变日程。", "适合练习和别的狗狗冷静地打招呼。", "训练可以分成几次，每次短一点。", "吃饭和散步时间和平时保持一致吧。"],
+    ["请不要打扰它午睡。", "发呆也别管它，它在思考呢。", "准备一个软软的垫子和安静的角落吧。", "把主人的衣服或毯子放在旁边，它会休息得更好。", "散步慢慢走，边闻边走就好。", "让家里保持安静吧。"],
+    ["用梳毛或按摩增加肌肤接触吧。", "把膝盖的位置留给它。", "看着它的眼睛叫它名字，它会用尾巴回应。", "轻轻挠挠耳后和下巴。", "出门前和回家后都抱抱它吧。", "今天尽量早点回家吧。"]
   ],
   colors: [["绿色","嫩绿","薄荷绿","橄榄绿","青绿"],["红色","橙色","朱红","粉色","紫色"],["黄色","米色","棕色","芥末黄","杏色"],["白色","银色","灰色","象牙白","金色"],["蓝色","藏青","黑色","天蓝","湖蓝"]],
   items: [
